@@ -15,6 +15,7 @@ interface FormattedRace {
   isUpcoming: boolean;
   isPastRace: boolean;
   isCurrentRace?: boolean;
+  round: string; // Added round for race identification
 }
 
 export const useRaceSchedule = (season: string) => {
@@ -39,6 +40,7 @@ export const useRaceSchedule = (season: string) => {
           
           return {
             id: index + 1,
+            round: race.round, // Add the round from the API
             name: race.raceName,
             circuit: race.Circuit.circuitName,
             country: race.Circuit.Location.country,

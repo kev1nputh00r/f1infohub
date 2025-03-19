@@ -218,6 +218,8 @@ const Schedule = () => {
                   <RaceCard
                     {...race}
                     time={adjustTime(race.time, selectedTimezone)}
+                    season={selectedSeason}
+                    round={race.id.toString()}
                   />
                 </div>
               ))}

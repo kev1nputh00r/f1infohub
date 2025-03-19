@@ -1,9 +1,11 @@
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Flag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RaceCardProps {
+  id: number;
   name: string;
   circuit: string;
   country: string;
@@ -13,9 +15,12 @@ interface RaceCardProps {
   isUpcoming?: boolean;
   isPastRace?: boolean;
   isCurrentRace?: boolean;
+  season: string;
+  round: string;
 }
 
 const RaceCard = ({
+  id,
   name,
   circuit,
   country,
@@ -25,6 +30,8 @@ const RaceCard = ({
   isUpcoming = false,
   isPastRace = false,
   isCurrentRace = false,
+  season,
+  round,
 }: RaceCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -89,10 +96,13 @@ const RaceCard = ({
               <span>{time}</span>
             </div>
           </div>
-          <button className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium">
+          <Link 
+            to={`/races/${season}/${round}`}
+            className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
+          >
             <Flag className="w-4 h-4 mr-2" />
             {isCurrentRace ? "View Live Results" : isPastRace ? "View Results" : "View Details"}
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -1,12 +1,11 @@
 
 /**
- * Ergast F1 API Service
- * Documentation: http://ergast.com/mrd/
+ * F1 API Service using Jolpi's Ergast-compatible API
+ * Alternative to the official Ergast API
  */
 
-// Base URLs for the F1 APIs
-const ERGAST_BASE_URL = 'https://ergast.com/api/f1';
-const ALTERNATIVE_BASE_URL = 'https://api.jolpi.ca/ergast/f1';
+// Base URL for the F1 API
+const BASE_URL = 'https://api.jolpi.ca/ergast/f1';
 
 // Define interfaces for the API responses
 export interface Driver {
@@ -60,6 +59,33 @@ export interface ConstructorStanding {
   Constructor: Constructor;
 }
 
+export interface RaceResult {
+  number: string;
+  position: string;
+  positionText: string;
+  points: string;
+  Driver: Driver;
+  Constructor: Constructor;
+  grid: string;
+  laps: string;
+  status: string;
+  Time?: {
+    millis: string;
+    time: string;
+  };
+  FastestLap?: {
+    rank: string;
+    lap: string;
+    Time: {
+      time: string;
+    };
+    AverageSpeed: {
+      units: string;
+      speed: string;
+    };
+  };
+}
+
 export interface DriverStandingsResponse {
   MRData: {
     StandingsTable: {
@@ -95,11 +121,17 @@ export interface RaceScheduleResponse {
   };
 }
 
-// Helper function to determine which API to use based on season
-const getBaseUrl = (season: string): string => {
-  // Use the alternative API for 2025 data
-  return season === '2025' ? ALTERNATIVE_BASE_URL : ERGAST_BASE_URL;
-};
+export interface RaceResultResponse {
+  MRData: {
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<Race & {
+        Results: RaceResult[];
+      }>;
+    };
+  };
+}
 
 /**
  * Fetch driver standings for a specific season
@@ -108,8 +140,7 @@ const getBaseUrl = (season: string): string => {
  */
 export const getDriverStandings = async (season: string): Promise<DriverStanding[]> => {
   try {
-    const baseUrl = getBaseUrl(season);
-    const response = await fetch(`${baseUrl}/${season}/driverStandings.json`);
+    const response = await fetch(`${BASE_URL}/${season}/driverStandings.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch driver standings: ${response.status}`);
@@ -135,8 +166,7 @@ export const getDriverStandings = async (season: string): Promise<DriverStanding
  */
 export const getConstructorStandings = async (season: string): Promise<ConstructorStanding[]> => {
   try {
-    const baseUrl = getBaseUrl(season);
-    const response = await fetch(`${baseUrl}/${season}/constructorStandings.json`);
+    const response = await fetch(`${BASE_URL}/${season}/constructorStandings.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch constructor standings: ${response.status}`);
@@ -162,8 +192,7 @@ export const getConstructorStandings = async (season: string): Promise<Construct
  */
 export const getRaceSchedule = async (season: string): Promise<Race[]> => {
   try {
-    const baseUrl = getBaseUrl(season);
-    const response = await fetch(`${baseUrl}/${season}.json`);
+    const response = await fetch(`${BASE_URL}/${season}.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch race schedule: ${response.status}`);
@@ -185,15 +214,19 @@ export const getRaceSchedule = async (season: string): Promise<Race[]> => {
  */
 export const getRaceResults = async (season: string, round: string) => {
   try {
-    const baseUrl = getBaseUrl(season);
-    const response = await fetch(`${baseUrl}/${season}/${round}/results.json`);
+    const response = await fetch(`${BASE_URL}/${season}/${round}/results.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch race results: ${response.status}`);
     }
     
-    const data = await response.json();
-    return data.MRData.RaceTable.Races[0].Results;
+    const data: RaceResultResponse = await response.json();
+    
+    if (data.MRData.RaceTable.Races.length === 0) {
+      return null;
+    }
+    
+    return data.MRData.RaceTable.Races[0];
   } catch (error) {
     console.error('Error fetching race results:', error);
     throw error;
@@ -211,8 +244,7 @@ export const getHistoricalData = async (resource: 'drivers' | 'constructors', st
     const allData: any[] = [];
     
     for (let year = startYear; year <= endYear; year++) {
-      const baseUrl = getBaseUrl(year.toString());
-      const response = await fetch(`${baseUrl}/${year}/${resource}.json`);
+      const response = await fetch(`${BASE_URL}/${year}/${resource}.json`);
       
       if (!response.ok) {
         console.error(`Failed to fetch ${resource} for ${year}: ${response.status}`);

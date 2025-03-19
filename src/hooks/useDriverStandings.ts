@@ -45,7 +45,7 @@ export const useDriverStandings = (season: string) => {
         console.error('Error fetching driver standings:', err);
         toast({
           title: "Error",
-          description: "Failed to load driver standings. Please try again later.",
+          description: `Failed to load driver standings for ${season} season. Please try again later.`,
           variant: "destructive",
         });
         throw err;

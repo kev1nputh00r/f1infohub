@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flag, Calendar, Trophy, Newspaper, ChevronRight } from 'lucide-react';
+import { Flag, Calendar, Trophy, Newspaper, ChevronRight, BookOpen } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import RaceCard from '@/components/ui/RaceCard';
@@ -135,11 +135,11 @@ const Index = () => {
                   Driver Standings
                 </Link>
                 <Link
-                  to="/schedule"
+                  to="/history"
                   className="inline-flex items-center bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-md font-medium transition-colors duration-300"
                 >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Race Calendar
+                  <BookOpen className="w-5 h-5 mr-2" />
+                  F1 History
                 </Link>
               </div>
             </div>

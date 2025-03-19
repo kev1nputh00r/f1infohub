@@ -4,8 +4,9 @@
  * Documentation: http://ergast.com/mrd/
  */
 
-// Base URL for the Ergast F1 API
-const BASE_URL = 'https://ergast.com/api/f1';
+// Base URLs for the F1 APIs
+const ERGAST_BASE_URL = 'https://ergast.com/api/f1';
+const ALTERNATIVE_BASE_URL = 'https://api.jolpi.ca/ergast/f1';
 
 // Define interfaces for the API responses
 export interface Driver {
@@ -94,6 +95,12 @@ export interface RaceScheduleResponse {
   };
 }
 
+// Helper function to determine which API to use based on season
+const getBaseUrl = (season: string): string => {
+  // Use the alternative API for 2025 data
+  return season === '2025' ? ALTERNATIVE_BASE_URL : ERGAST_BASE_URL;
+};
+
 /**
  * Fetch driver standings for a specific season
  * @param season The F1 season year (e.g., '2024')
@@ -101,7 +108,8 @@ export interface RaceScheduleResponse {
  */
 export const getDriverStandings = async (season: string): Promise<DriverStanding[]> => {
   try {
-    const response = await fetch(`${BASE_URL}/${season}/driverStandings.json`);
+    const baseUrl = getBaseUrl(season);
+    const response = await fetch(`${baseUrl}/${season}/driverStandings.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch driver standings: ${response.status}`);
@@ -127,7 +135,8 @@ export const getDriverStandings = async (season: string): Promise<DriverStanding
  */
 export const getConstructorStandings = async (season: string): Promise<ConstructorStanding[]> => {
   try {
-    const response = await fetch(`${BASE_URL}/${season}/constructorStandings.json`);
+    const baseUrl = getBaseUrl(season);
+    const response = await fetch(`${baseUrl}/${season}/constructorStandings.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch constructor standings: ${response.status}`);
@@ -153,7 +162,8 @@ export const getConstructorStandings = async (season: string): Promise<Construct
  */
 export const getRaceSchedule = async (season: string): Promise<Race[]> => {
   try {
-    const response = await fetch(`${BASE_URL}/${season}.json`);
+    const baseUrl = getBaseUrl(season);
+    const response = await fetch(`${baseUrl}/${season}.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch race schedule: ${response.status}`);
@@ -175,7 +185,8 @@ export const getRaceSchedule = async (season: string): Promise<Race[]> => {
  */
 export const getRaceResults = async (season: string, round: string) => {
   try {
-    const response = await fetch(`${BASE_URL}/${season}/${round}/results.json`);
+    const baseUrl = getBaseUrl(season);
+    const response = await fetch(`${baseUrl}/${season}/${round}/results.json`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch race results: ${response.status}`);
@@ -200,7 +211,8 @@ export const getHistoricalData = async (resource: 'drivers' | 'constructors', st
     const allData: any[] = [];
     
     for (let year = startYear; year <= endYear; year++) {
-      const response = await fetch(`${BASE_URL}/${year}/${resource}.json`);
+      const baseUrl = getBaseUrl(year.toString());
+      const response = await fetch(`${baseUrl}/${year}/${resource}.json`);
       
       if (!response.ok) {
         console.error(`Failed to fetch ${resource} for ${year}: ${response.status}`);

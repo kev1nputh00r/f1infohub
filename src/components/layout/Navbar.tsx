@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Flag, Calendar, Trophy, Newspaper, Clock } from 'lucide-react';
+import { Menu, X, Flag, Calendar, Trophy, Newspaper, Clock, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
@@ -31,6 +31,7 @@ const Navbar = () => {
     { name: 'Schedule', path: '/schedule', icon: <Calendar className="w-5 h-5" /> },
     { name: 'Standings', path: '/standings', icon: <Trophy className="w-5 h-5" /> },
     { name: 'News', path: '/news', icon: <Newspaper className="w-5 h-5" /> },
+    { name: 'F1 History', path: '/history', icon: <BookOpen className="w-5 h-5" /> },
   ];
 
   return (

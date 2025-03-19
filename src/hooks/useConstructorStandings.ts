@@ -41,7 +41,7 @@ export const useConstructorStandings = (season: string) => {
         console.error('Error fetching constructor standings:', err);
         toast({
           title: "Error",
-          description: "Failed to load constructor standings. Please try again later.",
+          description: `Failed to load constructor standings for ${season} season. Please try again later.`,
           variant: "destructive",
         });
         throw err;

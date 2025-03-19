@@ -7,71 +7,28 @@ import Footer from '@/components/layout/Footer';
 import RaceCard from '@/components/ui/RaceCard';
 import NewsCard from '@/components/ui/NewsCard';
 import DriverCard from '@/components/ui/DriverCard';
+import { useDriverStandings } from '@/hooks/useDriverStandings';
+import { useConstructorStandings } from '@/hooks/useConstructorStandings';
+import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
+import { initScrollAnimations } from '@/lib/animation';
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const currentSeason = '2024';
+  
+  // Fetch data using our custom hooks
+  const { driverStandings, loading: driversLoading } = useDriverStandings(currentSeason);
+  const { constructorStandings, loading: constructorsLoading } = useConstructorStandings(currentSeason);
+  const { races, loading: racesLoading } = useRaceSchedule(currentSeason);
 
-  useEffect(() => {
-    // Animation on mount
-    const timeout = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+  // Get upcoming races only
+  const upcomingRaces = races.filter(race => race.isUpcoming).slice(0, 3);
+  
+  // Top drivers (limited to 3 for the homepage)
+  const topDrivers = driverStandings.slice(0, 3);
 
-    // Initialize scroll animations
-    const animateOnScroll = () => {
-      const elements = document.querySelectorAll('.animate-on-scroll');
-      elements.forEach((element) => {
-        const elementPosition = element.getBoundingClientRect().top;
-        const screenPosition = window.innerHeight / 1.2;
-        
-        if (elementPosition < screenPosition) {
-          element.classList.add('animated');
-        }
-      });
-    };
-
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll(); // Initial check
-
-    return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('scroll', animateOnScroll);
-    };
-  }, []);
-
-  // Mock data
-  const upcomingRaces = [
-    {
-      name: "Italian Grand Prix",
-      circuit: "Monza",
-      country: "Italy",
-      date: "September 1, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Italy_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-      isCurrentRace: true,
-    },
-    {
-      name: "Azerbaijan Grand Prix",
-      circuit: "Baku City Circuit",
-      country: "Azerbaijan",
-      date: "September 15, 2023",
-      time: "2:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Azerbaijan_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      name: "Singapore Grand Prix",
-      circuit: "Marina Bay",
-      country: "Singapore",
-      date: "September 22, 2023",
-      time: "8:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Singapore_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    }
-  ];
-
+  // Latest news (mock data for now)
   const latestNews = [
     {
       title: "Hamilton Secures Pole Position at Monza",
@@ -102,38 +59,20 @@ const Index = () => {
     }
   ];
 
-  const topDrivers = [
-    {
-      position: 1,
-      name: "Max Verstappen",
-      team: "Red Bull Racing",
-      nationality: "Netherlands",
-      points: 349,
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/2col/image.png",
-      teamColor: "#0600EF",
-      previousPosition: 1,
-    },
-    {
-      position: 2,
-      name: "Lewis Hamilton",
-      team: "Mercedes",
-      nationality: "United Kingdom",
-      points: 280,
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png.transform/2col/image.png",
-      teamColor: "#00D2BE",
-      previousPosition: 3,
-    },
-    {
-      position: 3,
-      name: "Charles Leclerc",
-      team: "Ferrari",
-      nationality: "Monaco",
-      points: 275,
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png.transform/2col/image.png",
-      teamColor: "#DC0000",
-      previousPosition: 2,
-    }
-  ];
+  useEffect(() => {
+    // Animation on mount
+    const timeout = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+
+    // Initialize scroll animations
+    const cleanup = initScrollAnimations();
+
+    return () => {
+      clearTimeout(timeout);
+      cleanup();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -163,7 +102,7 @@ const Index = () => {
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
             )}>
               <div className="inline-block bg-f1-red px-4 py-1 rounded-md mb-6">
-                <span className="font-formula text-white text-sm">LIVE • Italian Grand Prix</span>
+                <span className="font-formula text-white text-sm">F1 {currentSeason} Season</span>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 text-shadow">
                 Experience the Thrill of Formula 1 Racing
@@ -173,18 +112,18 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/live"
-                  className="inline-flex items-center bg-f1-red hover:bg-f1-red/90 text-white px-6 py-3 rounded-md font-medium transition-colors duration-300"
-                >
-                  <Flag className="w-5 h-5 mr-2" />
-                  Live Race Results
-                </Link>
-                <Link
                   to="/standings"
-                  className="inline-flex items-center bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-md font-medium transition-colors duration-300"
+                  className="inline-flex items-center bg-f1-red hover:bg-f1-red/90 text-white px-6 py-3 rounded-md font-medium transition-colors duration-300"
                 >
                   <Trophy className="w-5 h-5 mr-2" />
                   Driver Standings
+                </Link>
+                <Link
+                  to="/schedule"
+                  className="inline-flex items-center bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-md font-medium transition-colors duration-300"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Race Calendar
                 </Link>
               </div>
             </div>
@@ -194,6 +133,36 @@ const Index = () => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" className="fill-f1-black">
               <path d="M0,32L80,42.7C160,53,320,75,480,80C640,85,800,75,960,64C1120,53,1280,43,1360,37.3L1440,32L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z" />
             </svg>
+          </div>
+        </section>
+        
+        {/* Driver Standings Section */}
+        <section className="py-20 bg-f1-gray/5">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center mb-10">
+              <div>
+                <h2 className="text-3xl font-formula font-bold text-white">Driver Standings {currentSeason}</h2>
+                <p className="text-gray-400 mt-2">Current top performers in the championship</p>
+              </div>
+              <Link to="/standings" className="text-f1-red hover:text-f1-red/80 font-medium inline-flex items-center transition-colors duration-300">
+                View All Standings
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
+              {driversLoading ? (
+                // Loading state
+                Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="bg-f1-gray/10 rounded-lg p-5 h-40 animate-pulse"></div>
+                ))
+              ) : (
+                // Show top 3 drivers
+                topDrivers.map((driver, index) => (
+                  <DriverCard key={index} {...driver} />
+                ))
+              )}
+            </div>
           </div>
         </section>
         
@@ -211,31 +180,17 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-            {upcomingRaces.map((race, index) => (
-              <RaceCard key={index} {...race} />
-            ))}
-          </div>
-        </section>
-        
-        {/* Driver Standings Section */}
-        <section className="py-20 bg-f1-gray/5">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center mb-10">
-              <div>
-                <h2 className="text-3xl font-formula font-bold text-white">Driver Standings</h2>
-                <p className="text-gray-400 mt-2">Current top performers in the championship</p>
-              </div>
-              <Link to="/standings" className="text-f1-red hover:text-f1-red/80 font-medium inline-flex items-center transition-colors duration-300">
-                View All Standings
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-              {topDrivers.map((driver, index) => (
-                <DriverCard key={index} {...driver} />
-              ))}
-            </div>
+            {racesLoading ? (
+              // Loading state
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-f1-gray/10 rounded-lg h-72 animate-pulse"></div>
+              ))
+            ) : (
+              // Show upcoming races
+              upcomingRaces.map((race, index) => (
+                <RaceCard key={index} {...race} />
+              ))
+            )}
           </div>
         </section>
         

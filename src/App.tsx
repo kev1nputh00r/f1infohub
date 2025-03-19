@@ -9,6 +9,7 @@ import LiveResults from "./pages/LiveResults";
 import News from "./pages/News";
 import Schedule from "./pages/Schedule";
 import Standings from "./pages/Standings";
+import F1History from "./pages/F1History";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/standings" element={<Standings />} />
+          <Route path="/history" element={<F1History />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

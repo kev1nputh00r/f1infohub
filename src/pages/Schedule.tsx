@@ -4,7 +4,9 @@ import { Calendar, MapPin, Clock, Filter, ChevronDown, AlertCircle } from 'lucid
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import RaceCard from '@/components/ui/RaceCard';
+import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
+import { initScrollAnimations } from '@/lib/animation';
 
 // Define time zones
 const TIMEZONES = [
@@ -16,283 +18,23 @@ const TIMEZONES = [
 ];
 
 // Define seasons
-const SEASONS = ['2023', '2022', '2021', '2020', '2019'];
+const SEASONS = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
 const Schedule = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('local');
-  const [selectedSeason, setSelectedSeason] = useState('2023');
+  const [selectedSeason, setSelectedSeason] = useState('2024');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [races, setRaces] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'past', 'all'
-
-  // Mock race data
-  const mockRaces = [
-    {
-      id: 1,
-      name: "Bahrain Grand Prix",
-      circuit: "Bahrain International Circuit",
-      country: "Bahrain",
-      date: "March 5, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Bahrain_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 2,
-      name: "Saudi Arabian Grand Prix",
-      circuit: "Jeddah Corniche Circuit",
-      country: "Saudi Arabia",
-      date: "March 19, 2023",
-      time: "7:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Saudi_Arabia_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 3,
-      name: "Australian Grand Prix",
-      circuit: "Albert Park",
-      country: "Australia",
-      date: "April 2, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Australia_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 4,
-      name: "Chinese Grand Prix",
-      circuit: "Shanghai International Circuit",
-      country: "China",
-      date: "April 16, 2023",
-      time: "2:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/China_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 5,
-      name: "Miami Grand Prix",
-      circuit: "Miami International Autodrome",
-      country: "United States",
-      date: "May 7, 2023",
-      time: "3:30 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Miami_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 6,
-      name: "Emilia Romagna Grand Prix",
-      circuit: "Imola",
-      country: "Italy",
-      date: "May 21, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Emilia_Romagna_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 7,
-      name: "Monaco Grand Prix",
-      circuit: "Circuit de Monaco",
-      country: "Monaco",
-      date: "May 28, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Monaco_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 8,
-      name: "Spanish Grand Prix",
-      circuit: "Circuit de Barcelona-Catalunya",
-      country: "Spain",
-      date: "June 4, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Spain_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 9,
-      name: "Canadian Grand Prix",
-      circuit: "Circuit Gilles-Villeneuve",
-      country: "Canada",
-      date: "June 18, 2023",
-      time: "2:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Canada_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 10,
-      name: "Austrian Grand Prix",
-      circuit: "Red Bull Ring",
-      country: "Austria",
-      date: "July 2, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Austria_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 11,
-      name: "British Grand Prix",
-      circuit: "Silverstone",
-      country: "United Kingdom",
-      date: "July 9, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Great_Britain_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 12,
-      name: "Hungarian Grand Prix",
-      circuit: "Hungaroring",
-      country: "Hungary",
-      date: "July 23, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Hungary_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 13,
-      name: "Belgian Grand Prix",
-      circuit: "Spa-Francorchamps",
-      country: "Belgium",
-      date: "July 30, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Belgium_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 14,
-      name: "Dutch Grand Prix",
-      circuit: "Zandvoort",
-      country: "Netherlands",
-      date: "August 27, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Netherlands_Circuit.png.transform/7col/image.png",
-      isUpcoming: false,
-      isPastRace: true,
-    },
-    {
-      id: 15,
-      name: "Italian Grand Prix",
-      circuit: "Monza",
-      country: "Italy",
-      date: "September 3, 2023",
-      time: "3:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Italy_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-      isCurrentRace: true,
-    },
-    {
-      id: 16,
-      name: "Azerbaijan Grand Prix",
-      circuit: "Baku City Circuit",
-      country: "Azerbaijan",
-      date: "September 17, 2023",
-      time: "1:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Azerbaijan_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 17,
-      name: "Singapore Grand Prix",
-      circuit: "Marina Bay Street Circuit",
-      country: "Singapore",
-      date: "September 24, 2023",
-      time: "8:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Singapore_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 18,
-      name: "United States Grand Prix",
-      circuit: "Circuit of The Americas",
-      country: "United States",
-      date: "October 22, 2023",
-      time: "2:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/United_States_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 19,
-      name: "Mexico City Grand Prix",
-      circuit: "Autódromo Hermanos Rodríguez",
-      country: "Mexico",
-      date: "October 29, 2023",
-      time: "2:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Mexico_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 20,
-      name: "São Paulo Grand Prix",
-      circuit: "Interlagos",
-      country: "Brazil",
-      date: "November 5, 2023",
-      time: "1:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Brazil_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 21,
-      name: "Las Vegas Grand Prix",
-      circuit: "Las Vegas Street Circuit",
-      country: "United States",
-      date: "November 18, 2023",
-      time: "10:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Las_Vegas_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 22,
-      name: "Qatar Grand Prix",
-      circuit: "Losail International Circuit",
-      country: "Qatar",
-      date: "November 26, 2023",
-      time: "5:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Qatar_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-    {
-      id: 23,
-      name: "Abu Dhabi Grand Prix",
-      circuit: "Yas Marina Circuit",
-      country: "UAE",
-      date: "December 3, 2023",
-      time: "5:00 PM",
-      imageUrl: "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png.transform/7col/image.png",
-      isUpcoming: true,
-    },
-  ];
-
-  useEffect(() => {
-    // Simulate loading data
-    setLoading(true);
-    
-    setTimeout(() => {
-      let filteredRaces = [...mockRaces];
-      
-      // Filter based on active tab
-      if (activeTab === 'upcoming') {
-        filteredRaces = filteredRaces.filter(race => race.isUpcoming);
-      } else if (activeTab === 'past') {
-        filteredRaces = filteredRaces.filter(race => race.isPastRace);
-      }
-      
-      setRaces(filteredRaces);
-      setLoading(false);
-    }, 1000);
-  }, [activeTab, selectedSeason, selectedTimezone]);
+  
+  // Fetch race schedule data
+  const { races, loading } = useRaceSchedule(selectedSeason);
+  
+  // Filter races based on the active tab
+  const filteredRaces = races.filter(race => {
+    if (activeTab === 'upcoming') return race.isUpcoming;
+    if (activeTab === 'past') return race.isPastRace;
+    return true; // 'all' tab
+  });
 
   // Adjust time based on selected timezone (simplified example)
   const adjustTime = (time: string, timezone: string) => {
@@ -307,6 +49,12 @@ const Schedule = () => {
     
     return time;
   };
+
+  useEffect(() => {
+    // Initialize scroll animations
+    const cleanup = initScrollAnimations();
+    return cleanup;
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -435,7 +183,7 @@ const Schedule = () => {
           )}
           
           {/* No Results */}
-          {!loading && races.length === 0 && (
+          {!loading && filteredRaces.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20">
               <Calendar className="h-16 w-16 text-f1-gray mb-4" />
               <h3 className="text-xl font-formula text-white mb-2">No Races Found</h3>
@@ -451,9 +199,9 @@ const Schedule = () => {
             </div>
           )}
           
-          {!loading && races.length > 0 && (
+          {!loading && filteredRaces.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {races.map((race) => (
+              {filteredRaces.map((race) => (
                 <div key={race.id} className="animate-on-scroll">
                   <RaceCard
                     {...race}

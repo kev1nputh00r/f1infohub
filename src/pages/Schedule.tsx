@@ -18,7 +18,7 @@ const TIMEZONES = [
 ];
 
 // Define seasons
-const SEASONS = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
+const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
 const Schedule = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('local');
@@ -188,14 +188,26 @@ const Schedule = () => {
               <Calendar className="h-16 w-16 text-f1-gray mb-4" />
               <h3 className="text-xl font-formula text-white mb-2">No Races Found</h3>
               <p className="text-gray-400 text-center max-w-md">
-                No races available for the selected filters.
+                {selectedSeason === '2025' 
+                  ? `The ${selectedSeason} race calendar has not been announced yet.` 
+                  : `No races available for the selected filters.`}
               </p>
-              <button 
-                onClick={() => setActiveTab('all')}
-                className="mt-6 px-6 py-2 bg-f1-red hover:bg-f1-red/90 text-white rounded-md transition-colors duration-200"
-              >
-                View All Races
-              </button>
+              {selectedSeason === '2025' && (
+                <button 
+                  onClick={() => setSelectedSeason('2024')}
+                  className="mt-6 px-6 py-2 bg-f1-red hover:bg-f1-red/90 text-white rounded-md transition-colors duration-200"
+                >
+                  View 2024 Races
+                </button>
+              )}
+              {selectedSeason !== '2025' && (
+                <button 
+                  onClick={() => setActiveTab('all')}
+                  className="mt-6 px-6 py-2 bg-f1-red hover:bg-f1-red/90 text-white rounded-md transition-colors duration-200"
+                >
+                  View All Races
+                </button>
+              )}
             </div>
           )}
           

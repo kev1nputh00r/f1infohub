@@ -12,15 +12,22 @@ import { useConstructorStandings } from '@/hooks/useConstructorStandings';
 import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
 import { initScrollAnimations } from '@/lib/animation';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const currentSeason = '2024';
+  const [selectedSeason, setSelectedSeason] = useState('2024');
   
   // Fetch data using our custom hooks
-  const { driverStandings, loading: driversLoading } = useDriverStandings(currentSeason);
-  const { constructorStandings, loading: constructorsLoading } = useConstructorStandings(currentSeason);
-  const { races, loading: racesLoading } = useRaceSchedule(currentSeason);
+  const { driverStandings, loading: driversLoading } = useDriverStandings(selectedSeason);
+  const { constructorStandings, loading: constructorsLoading } = useConstructorStandings(selectedSeason);
+  const { races, loading: racesLoading } = useRaceSchedule(selectedSeason);
 
   // Get upcoming races only
   const upcomingRaces = races.filter(race => race.isUpcoming).slice(0, 3);
@@ -101,8 +108,17 @@ const Index = () => {
               "max-w-3xl transition-all duration-700 transform",
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
             )}>
-              <div className="inline-block bg-f1-red px-4 py-1 rounded-md mb-6">
-                <span className="font-formula text-white text-sm">F1 {currentSeason} Season</span>
+              <div className="inline-flex items-center bg-f1-red px-4 py-1 rounded-md mb-6">
+                <span className="font-formula text-white text-sm">F1 Season</span>
+                <Select defaultValue={selectedSeason} onValueChange={setSelectedSeason}>
+                  <SelectTrigger className="border-none bg-transparent text-white w-20 h-6 p-0 ml-2">
+                    <SelectValue placeholder="Season" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 text-shadow">
                 Experience the Thrill of Formula 1 Racing
@@ -141,7 +157,7 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-10">
               <div>
-                <h2 className="text-3xl font-formula font-bold text-white">Driver Standings {currentSeason}</h2>
+                <h2 className="text-3xl font-formula font-bold text-white">Driver Standings {selectedSeason}</h2>
                 <p className="text-gray-400 mt-2">Current top performers in the championship</p>
               </div>
               <Link to="/standings" className="text-f1-red hover:text-f1-red/80 font-medium inline-flex items-center transition-colors duration-300">
@@ -156,13 +172,86 @@ const Index = () => {
                 Array.from({ length: 3 }).map((_, index) => (
                   <div key={index} className="bg-f1-gray/10 rounded-lg p-5 h-40 animate-pulse"></div>
                 ))
-              ) : (
+              ) : driverStandings.length > 0 ? (
                 // Show top 3 drivers
                 topDrivers.map((driver, index) => (
                   <DriverCard key={index} {...driver} />
                 ))
+              ) : (
+                // No data state
+                <div className="col-span-3 text-center py-10">
+                  <p className="text-gray-400">No driver standings available for {selectedSeason} season yet.</p>
+                </div>
               )}
             </div>
+          </div>
+        </section>
+        
+        {/* Teams Standings Section */}
+        <section className="py-20 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-formula font-bold text-white">Constructor Standings {selectedSeason}</h2>
+              <p className="text-gray-400 mt-2">Top performing teams in the championship</p>
+            </div>
+            <Link to="/standings" className="text-f1-red hover:text-f1-red/80 font-medium inline-flex items-center transition-colors duration-300">
+              View All Teams
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
+          
+          <div className="space-y-4 animate-on-scroll">
+            {constructorsLoading ? (
+              // Loading state
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-f1-gray/10 rounded-lg h-20 animate-pulse"></div>
+              ))
+            ) : constructorStandings.length > 0 ? (
+              // Show top 3 teams
+              constructorStandings.slice(0, 3).map((team, index) => (
+                <div 
+                  key={index} 
+                  className={cn(
+                    "bg-f1-gray/10 rounded-lg p-5 transition-all duration-300 hover:bg-f1-gray/20 border-l-4 animate-on-scroll",
+                  )}
+                  style={{ borderLeftColor: team.color }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="text-3xl font-formula font-bold text-white mr-5 w-10 text-center">
+                        {team.position}
+                      </div>
+                      <div className="flex-shrink-0 h-16 w-16 relative">
+                        <img 
+                          src={team.logo} 
+                          alt={team.name}
+                          className="object-contain h-full w-full"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="ml-5">
+                        <h3 className="text-xl font-formula text-white">{team.name}</h3>
+                        <p className="text-gray-400 text-sm">{team.nationality}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className="text-2xl font-formula font-bold text-white">
+                        {team.points} PTS
+                      </div>
+                      <div className="text-gray-400 text-sm">
+                        {team.wins} {team.wins === 1 ? 'Win' : 'Wins'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // No data state
+              <div className="text-center py-10">
+                <p className="text-gray-400">No constructor standings available for {selectedSeason} season yet.</p>
+              </div>
+            )}
           </div>
         </section>
         
@@ -185,11 +274,16 @@ const Index = () => {
               Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="bg-f1-gray/10 rounded-lg h-72 animate-pulse"></div>
               ))
-            ) : (
+            ) : upcomingRaces.length > 0 ? (
               // Show upcoming races
               upcomingRaces.map((race, index) => (
                 <RaceCard key={index} {...race} />
               ))
+            ) : (
+              // No upcoming races
+              <div className="col-span-3 text-center py-10">
+                <p className="text-gray-400">No upcoming races available for {selectedSeason} season yet.</p>
+              </div>
             )}
           </div>
         </section>

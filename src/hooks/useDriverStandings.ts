@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getDriverStandings, DriverStanding, getTeamColor, getDriverImageUrl } from '@/services/ergastApi';
 import { toast } from '@/components/ui/use-toast';
 
@@ -16,14 +16,10 @@ interface FormattedDriverStanding {
 }
 
 export const useDriverStandings = (season: string) => {
-  const [driverStandings, setDriverStandings] = useState<FormattedDriverStanding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchDriverStandings = async () => {
+  const { data: driverStandings = [], isLoading: loading, error } = useQuery({
+    queryKey: ['driverStandings', season],
+    queryFn: async () => {
       try {
-        setLoading(true);
         const data = await getDriverStandings(season);
         
         // Transform the API data to match our application's format
@@ -44,22 +40,19 @@ export const useDriverStandings = (season: string) => {
           };
         });
         
-        setDriverStandings(formattedData);
+        return formattedData;
       } catch (err) {
         console.error('Error fetching driver standings:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch driver standings'));
         toast({
           title: "Error",
           description: "Failed to load driver standings. Please try again later.",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        throw err;
       }
-    };
-
-    fetchDriverStandings();
-  }, [season]);
+    },
+    refetchOnWindowFocus: false,
+  });
 
   return { driverStandings, loading, error };
 };

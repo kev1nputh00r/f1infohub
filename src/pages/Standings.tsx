@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { initScrollAnimations } from '@/lib/animation';
 
 // Define seasons
-const SEASONS = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
+const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
 const Standings = () => {
   const [activeTab, setActiveTab] = useState('drivers'); // 'drivers' or 'teams'
@@ -122,75 +122,99 @@ const Standings = () => {
             <>
               {/* Drivers Standings */}
               {activeTab === 'drivers' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {driverStandings.map((driver, index) => (
-                    <div key={index} className="animate-on-scroll">
-                      <DriverCard {...driver} />
+                <>
+                  {driverStandings.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {driverStandings.map((driver, index) => (
+                        <div key={index} className="animate-on-scroll">
+                          <DriverCard {...driver} />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className="text-center py-20">
+                      <Trophy className="h-16 w-16 text-f1-gray/30 mx-auto mb-4" />
+                      <h3 className="text-xl font-formula text-white mb-2">No Driver Standings Available</h3>
+                      <p className="text-gray-400">
+                        Driver standings for the {selectedSeason} season are not available yet.
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
               
               {/* Teams Standings */}
               {activeTab === 'teams' && (
-                <div className="space-y-4">
-                  {constructorStandings.map((team, index) => (
-                    <div 
-                      key={index} 
-                      className={cn(
-                        "bg-f1-gray/10 rounded-lg p-5 transition-all duration-300 hover:bg-f1-gray/20 border-l-4 animate-on-scroll",
-                      )}
-                      style={{ borderLeftColor: team.color }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="text-3xl font-formula font-bold text-white mr-5 w-10 text-center">
-                            {team.position}
-                          </div>
-                          <div className="flex-shrink-0 h-16 w-16 relative">
-                            <img 
-                              src={team.logo} 
-                              alt={team.name}
-                              className="object-contain h-full w-full"
-                              loading="lazy"
-                            />
-                          </div>
-                          <div className="ml-5">
-                            <h3 className="text-xl font-formula text-white">{team.name}</h3>
-                            <p className="text-gray-400 text-sm">{team.nationality}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <div className="text-2xl font-formula font-bold text-white">
-                            {team.points} PTS
-                          </div>
-                          <div className="text-gray-400 text-sm">
-                            {team.wins} {team.wins === 1 ? 'Win' : 'Wins'}
-                          </div>
-                          {team.previousPosition && team.previousPosition !== team.position && (
-                            <div className={cn(
-                              "flex items-center justify-end text-xs mt-2",
-                              team.previousPosition > team.position ? "text-green-500" : "text-red-500"
-                            )}>
-                              {team.previousPosition > team.position ? (
-                                <>
-                                  <span>+{team.previousPosition - team.position}</span>
-                                  <ChevronDown className="h-3 w-3 ml-1 transform rotate-180" />
-                                </>
-                              ) : (
-                                <>
-                                  <span>-{team.position - team.previousPosition}</span>
-                                  <ChevronDown className="h-3 w-3 ml-1" />
-                                </>
+                <>
+                  {constructorStandings.length > 0 ? (
+                    <div className="space-y-4">
+                      {constructorStandings.map((team, index) => (
+                        <div 
+                          key={index} 
+                          className={cn(
+                            "bg-f1-gray/10 rounded-lg p-5 transition-all duration-300 hover:bg-f1-gray/20 border-l-4 animate-on-scroll",
+                          )}
+                          style={{ borderLeftColor: team.color }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="text-3xl font-formula font-bold text-white mr-5 w-10 text-center">
+                                {team.position}
+                              </div>
+                              <div className="flex-shrink-0 h-16 w-16 relative">
+                                <img 
+                                  src={team.logo} 
+                                  alt={team.name}
+                                  className="object-contain h-full w-full"
+                                  loading="lazy"
+                                />
+                              </div>
+                              <div className="ml-5">
+                                <h3 className="text-xl font-formula text-white">{team.name}</h3>
+                                <p className="text-gray-400 text-sm">{team.nationality}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-2xl font-formula font-bold text-white">
+                                {team.points} PTS
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                {team.wins} {team.wins === 1 ? 'Win' : 'Wins'}
+                              </div>
+                              {team.previousPosition && team.previousPosition !== team.position && (
+                                <div className={cn(
+                                  "flex items-center justify-end text-xs mt-2",
+                                  team.previousPosition > team.position ? "text-green-500" : "text-red-500"
+                                )}>
+                                  {team.previousPosition > team.position ? (
+                                    <>
+                                      <span>+{team.previousPosition - team.position}</span>
+                                      <ChevronDown className="h-3 w-3 ml-1 transform rotate-180" />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>-{team.position - team.previousPosition}</span>
+                                      <ChevronDown className="h-3 w-3 ml-1" />
+                                    </>
+                                  )}
+                                </div>
                               )}
                             </div>
-                          )}
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className="text-center py-20">
+                      <Car className="h-16 w-16 text-f1-gray/30 mx-auto mb-4" />
+                      <h3 className="text-xl font-formula text-white mb-2">No Constructor Standings Available</h3>
+                      <p className="text-gray-400">
+                        Constructor standings for the {selectedSeason} season are not available yet.
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

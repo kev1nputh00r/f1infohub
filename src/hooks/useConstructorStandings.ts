@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getConstructorStandings, ConstructorStanding, getTeamColor, getTeamLogoUrl } from '@/services/ergastApi';
 import { toast } from '@/components/ui/use-toast';
 
@@ -15,14 +15,10 @@ interface FormattedConstructorStanding {
 }
 
 export const useConstructorStandings = (season: string) => {
-  const [constructorStandings, setConstructorStandings] = useState<FormattedConstructorStanding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchConstructorStandings = async () => {
+  const { data: constructorStandings = [], isLoading: loading, error } = useQuery({
+    queryKey: ['constructorStandings', season],
+    queryFn: async () => {
       try {
-        setLoading(true);
         const data = await getConstructorStandings(season);
         
         // Transform the API data to match our application's format
@@ -40,22 +36,19 @@ export const useConstructorStandings = (season: string) => {
           };
         });
         
-        setConstructorStandings(formattedData);
+        return formattedData;
       } catch (err) {
         console.error('Error fetching constructor standings:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch constructor standings'));
         toast({
           title: "Error",
           description: "Failed to load constructor standings. Please try again later.",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        throw err;
       }
-    };
-
-    fetchConstructorStandings();
-  }, [season]);
+    },
+    refetchOnWindowFocus: false,
+  });
 
   return { constructorStandings, loading, error };
 };

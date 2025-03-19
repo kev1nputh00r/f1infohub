@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getRaceSchedule, Race, getCircuitImageUrl } from '@/services/ergastApi';
 import { toast } from '@/components/ui/use-toast';
 import { format, parseISO } from 'date-fns';
@@ -18,21 +18,18 @@ interface FormattedRace {
 }
 
 export const useRaceSchedule = (season: string) => {
-  const [races, setRaces] = useState<FormattedRace[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchRaceSchedule = async () => {
+  const { data: races = [], isLoading: loading, error } = useQuery({
+    queryKey: ['raceSchedule', season],
+    queryFn: async () => {
       try {
-        setLoading(true);
         const data = await getRaceSchedule(season);
         
         const today = new Date();
         
         // Transform the API data to match our application's format
         const formattedData: FormattedRace[] = data.map((race: Race, index) => {
-          const raceDate = parseISO(`${race.date}T${race.time || '00:00:00'}`);
+          const raceTime = race.time || '00:00:00Z';
+          const raceDate = parseISO(`${race.date}T${raceTime}`);
           const isPast = raceDate < today;
           
           // Check if this race is happening soon (within 2 days)
@@ -54,22 +51,19 @@ export const useRaceSchedule = (season: string) => {
           };
         });
         
-        setRaces(formattedData);
+        return formattedData;
       } catch (err) {
         console.error('Error fetching race schedule:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch race schedule'));
         toast({
           title: "Error",
           description: "Failed to load race schedule. Please try again later.",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        throw err;
       }
-    };
-
-    fetchRaceSchedule();
-  }, [season]);
+    },
+    refetchOnWindowFocus: false,
+  });
 
   return { races, loading, error };
 };

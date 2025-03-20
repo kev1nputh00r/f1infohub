@@ -18,127 +18,139 @@ const News = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // Mock news data
+  // Mock 2025 news data
   const mockNewsItems = [
     {
       id: 1,
-      title: "Verstappen Claims Victory in Thrilling Dutch Grand Prix",
-      excerpt: "Max Verstappen delighted his home crowd with a dominant performance at Zandvoort, extending his championship lead over Lewis Hamilton.",
+      title: "Lando Norris Dominates Season Opener in Bahrain",
+      excerpt: "Lando Norris secured a dominant victory at the 2025 Bahrain Grand Prix, leading from pole to flag as McLaren sets the pace for the new season.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/68eyZ1B0/s1000/formula-1-dutch-gp-2023-max-ve.jpg",
-      date: "Aug 27, 2023",
+      date: "Mar 2, 2025",
       time: "5:30 PM",
       category: "Race Report",
       url: "#",
+      season: "2025"
     },
     {
       id: 2,
-      title: "Mercedes Brings Major Upgrades to Italian Grand Prix",
-      excerpt: "The Silver Arrows have arrived at Monza with a comprehensive upgrade package as they look to challenge Red Bull in the high-speed temple of speed.",
+      title: "Ferrari Unveils Revolutionary Aerodynamic Package",
+      excerpt: "Ferrari has introduced a radical new floor and diffuser design that they believe will challenge McLaren's early season advantage at the Saudi Arabian GP.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1nLeMY/s1000/mercedes-w14-technical-detail.jpg",
-      date: "Aug 30, 2023",
+      date: "Mar 5, 2025",
       time: "10:15 AM",
       category: "Technical",
       url: "#",
+      season: "2025"
     },
     {
       id: 3,
-      title: "Ferrari Hopeful for Home Success at Monza",
-      excerpt: "Charles Leclerc and Carlos Sainz are optimistic about Ferrari's chances at their home race, following promising performance in practice sessions.",
+      title: "Red Bull Racing Addresses Early Season Performance Gaps",
+      excerpt: "After a challenging start to the 2025 season, Red Bull Racing's technical director reveals plans to recover their performance advantage.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZgbd0/s1000/charles-leclerc-ferrari-sf-23-.jpg",
-      date: "Aug 31, 2023",
+      date: "Mar 6, 2025",
       time: "2:45 PM",
       category: "Team News",
       url: "#",
+      season: "2025"
     },
     {
       id: 4,
-      title: "Hamilton: 'We're Getting Closer to Red Bull'",
-      excerpt: "Lewis Hamilton believes Mercedes is narrowing the gap to Red Bull after recent performances suggest the Silver Arrows are making progress with their troublesome W14.",
+      title: "Hamilton: 'Mercedes Finally Has a Car We Can Fight With'",
+      excerpt: "Lewis Hamilton expresses confidence in Mercedes' 2025 challenger after securing a podium in the season opener, marking a significant improvement over their 2024 form.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99JQR8Y/s1000/lewis-hamilton-mercedes-f1-w14.jpg",
-      date: "Sep 1, 2023",
+      date: "Mar 3, 2025",
       time: "9:20 AM",
       category: "Interview",
       url: "#",
+      season: "2025"
     },
     {
       id: 5,
-      title: "Norris Signs Contract Extension with McLaren",
-      excerpt: "Lando Norris has committed his future to McLaren, signing a multi-year contract extension that will keep him at the Woking-based team beyond 2025.",
+      title: "Bearman Impresses in Sauber Debut",
+      excerpt: "Oliver Bearman has made a strong impression in his full-time Formula 1 debut, scoring points for Sauber in his first race of the 2025 season.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/6D1nEAJ0/s1000/lando-norris-mclaren-f1-team-.jpg",
-      date: "Aug 29, 2023",
+      date: "Mar 4, 2025",
       time: "11:45 AM",
       category: "Driver News",
       url: "#",
+      season: "2025"
     },
     {
       id: 6,
-      title: "FIA Introduces New Technical Directive for Floor Regulations",
-      excerpt: "The sport's governing body has implemented a new technical directive aimed at preventing teams from exploiting flexible floor regulations.",
+      title: "FIA Introduces New DRS Activation Rules for 2025",
+      excerpt: "The sport's governing body has implemented new DRS regulations aimed at improving racing without making overtaking too easy.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/6AQ5Pnz0/s1000/fia-flags-1.jpg",
-      date: "Aug 30, 2023",
+      date: "Mar 7, 2025",
       time: "3:30 PM",
       category: "Technical",
       url: "#",
+      season: "2025"
     },
     {
       id: 7,
-      title: "Alpine Team Principal Steps Down Amid Restructuring",
-      excerpt: "Alpine F1 Team has announced a major restructuring of its leadership, with the team principal stepping down with immediate effect.",
+      title: "Alpine Shows Signs of Resurgence Under New Leadership",
+      excerpt: "After a difficult 2024 campaign, Alpine appears to have turned a corner with their new technical structure yielding immediate results in 2025.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/68yN3N40/s1000/alpine-f1-team-logo-1.jpg",
-      date: "Aug 28, 2023",
+      date: "Mar 5, 2025",
       time: "1:15 PM",
       category: "Team News",
       url: "#",
+      season: "2025"
     },
     {
       id: 8,
-      title: "Alonso: 'Aston Martin Can Fight for Championships in 2024'",
-      excerpt: "Fernando Alonso has expressed confidence that Aston Martin will be in a position to challenge for championships next season following the team's impressive development trajectory.",
+      title: "Alonso: '2025 Could Be My Final Season in Formula 1'",
+      excerpt: "Fernando Alonso has hinted that the 2025 season might be his last in Formula 1, as he evaluates his future in motorsport at the age of 43.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/0k7D47j0/s1000/fernando-alonso-aston-martin-f.jpg",
-      date: "Sep 1, 2023",
+      date: "Mar 8, 2025",
       time: "10:30 AM",
       category: "Interview",
       url: "#",
+      season: "2025"
     },
     {
       id: 9,
-      title: "Opinion: F1's New Regulations Are a Step in the Right Direction",
-      excerpt: "The 2022 regulation changes have delivered on their promise to create closer racing and more overtaking opportunities, but there's still work to be done.",
+      title: "Opinion: The 2025 Season Already Promises More Competition",
+      excerpt: "After just one race, the 2025 Formula 1 season is shaping up to be one of the most competitive in recent history with four teams in genuine contention.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1G4OA0/s1000/formula-1-f1-logo-1.jpg",
-      date: "Aug 27, 2023",
+      date: "Mar 4, 2025",
       time: "4:00 PM",
       category: "Opinion",
       url: "#",
+      season: "2025"
     },
     {
       id: 10,
-      title: "Williams Confirms Interest in Sainz for 2024 Seat",
-      excerpt: "Williams team principal James Vowles has confirmed the team's interest in signing Carlos Sainz for the 2024 season as they look to strengthen their driver lineup.",
+      title: "Haas Confirms Interest in Zhou for 2026 Seat",
+      excerpt: "Haas team principal has confirmed the team's interest in retaining Zhou Guanyu for 2026 following his strong start to the 2025 campaign.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/6Vxj3wA0/s1000/carlos-sainz-scuderia-ferrari-.jpg",
-      date: "Aug 31, 2023",
+      date: "Mar 6, 2025",
       time: "12:20 PM",
       category: "Driver News",
       url: "#",
+      season: "2025"
     },
     {
       id: 11,
-      title: "Verstappen's Dominance Reminiscent of Schumacher Era, Says Brawn",
-      excerpt: "Ross Brawn has drawn parallels between Max Verstappen's current dominance and Michael Schumacher's reign at Ferrari in the early 2000s.",
+      title: "Norris's Performance Reminiscent of Early Hamilton Era, Says Brawn",
+      excerpt: "Ross Brawn has drawn parallels between Lando Norris's current form and Lewis Hamilton's early dominance with McLaren after his impressive start to 2025.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99E3ReY/s1000/max-verstappen-red-bull-racing.jpg",
-      date: "Aug 28, 2023",
+      date: "Mar 7, 2025",
       time: "9:45 AM",
       category: "Opinion",
       url: "#",
+      season: "2025"
     },
     {
       id: 12,
-      title: "Red Bull Unveils Special Livery for Italian Grand Prix",
-      excerpt: "Red Bull Racing has revealed a special one-off livery for the Italian Grand Prix, paying tribute to their power unit supplier Honda.",
+      title: "McLaren Unveils Special Livery for Saudi Arabian Grand Prix",
+      excerpt: "McLaren Racing has revealed a special one-off livery for the Saudi Arabian Grand Prix, celebrating their new title sponsor's Middle Eastern heritage.",
       imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZd5d0/s1000/red-bull-racing-rb19-1.jpg",
-      date: "Sep 1, 2023",
+      date: "Mar 8, 2025",
       time: "8:30 AM",
       category: "Team News",
       url: "#",
+      season: "2025"
     },
   ];
 
@@ -159,7 +171,7 @@ const News = () => {
       setNewsItems(filteredNews.slice(0, page * 6));
       setHasMore(filteredNews.length > page * 6);
       setLoading(false);
-    }, 1000);
+    }, 800);
   }, [selectedCategory, searchTerm, page]);
 
   const loadMore = () => {
@@ -178,10 +190,10 @@ const News = () => {
               <div>
                 <h1 className="text-3xl md:text-4xl font-formula font-bold text-white flex items-center mb-2">
                   <Newspaper className="h-8 w-8 mr-3 text-f1-red" />
-                  Latest F1 News
+                  2025 F1 News
                 </h1>
                 <p className="text-gray-400">
-                  Stay updated with the latest stories from the Formula 1 paddock
+                  Stay updated with the latest stories from the 2025 Formula 1 season
                 </p>
               </div>
             </div>
@@ -195,7 +207,7 @@ const News = () => {
                   </div>
                   <input
                     type="text"
-                    placeholder="Search news..."
+                    placeholder="Search 2025 news..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="block w-full bg-f1-gray/10 border border-f1-gray/20 rounded-md py-3 pl-10 pr-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-f1-red/50 transition-all duration-200"

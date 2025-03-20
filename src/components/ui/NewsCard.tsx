@@ -11,6 +11,7 @@ interface NewsCardProps {
   time: string;
   category: string;
   url: string;
+  season?: string;
 }
 
 const NewsCard = ({
@@ -21,6 +22,7 @@ const NewsCard = ({
   time,
   category,
   url,
+  season = "2025",
 }: NewsCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -49,6 +51,13 @@ const NewsCard = ({
             {category}
           </span>
         </div>
+        {season && (
+          <div className="absolute top-3 right-3 z-20">
+            <span className="inline-flex items-center rounded-full bg-f1-black/80 px-2.5 py-0.5 text-xs font-medium text-white shadow-sm">
+              {season}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 p-5 flex flex-col">

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Flag, Calendar, Trophy, Newspaper, ChevronRight, BookOpen } from 'lucide-react';
@@ -24,18 +23,14 @@ const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState('2024');
   
-  // Fetch data using our custom hooks
   const { driverStandings, loading: driversLoading } = useDriverStandings(selectedSeason);
   const { constructorStandings, loading: constructorsLoading } = useConstructorStandings(selectedSeason);
   const { races, loading: racesLoading } = useRaceSchedule(selectedSeason);
 
-  // Get upcoming races only
   const upcomingRaces = races.filter(race => race.isUpcoming).slice(0, 3);
   
-  // Top drivers (limited to 3 for the homepage)
   const topDrivers = driverStandings.slice(0, 3);
 
-  // Latest news (mock data for now)
   const latestNews = [
     {
       title: "Hamilton Secures Pole Position at Monza",
@@ -67,12 +62,10 @@ const Index = () => {
   ];
 
   useEffect(() => {
-    // Animation on mount
     const timeout = setTimeout(() => {
       setIsLoaded(true);
     }, 100);
 
-    // Initialize scroll animations
     const cleanup = initScrollAnimations();
 
     return () => {
@@ -86,7 +79,6 @@ const Index = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <section className="relative h-screen w-full overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-t from-f1-black to-transparent z-10" />
@@ -152,7 +144,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Driver Standings Section */}
         <section className="py-20 bg-f1-gray/5">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-10">
@@ -168,17 +159,14 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
               {driversLoading ? (
-                // Loading state
                 Array.from({ length: 3 }).map((_, index) => (
                   <div key={index} className="bg-f1-gray/10 rounded-lg p-5 h-40 animate-pulse"></div>
                 ))
               ) : driverStandings.length > 0 ? (
-                // Show top 3 drivers
                 topDrivers.map((driver, index) => (
                   <DriverCard key={index} {...driver} />
                 ))
               ) : (
-                // No data state
                 <div className="col-span-3 text-center py-10">
                   <p className="text-gray-400">No driver standings available for {selectedSeason} season yet.</p>
                 </div>
@@ -187,7 +175,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Teams Standings Section */}
         <section className="py-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
@@ -202,12 +189,10 @@ const Index = () => {
           
           <div className="space-y-4 animate-on-scroll">
             {constructorsLoading ? (
-              // Loading state
               Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="bg-f1-gray/10 rounded-lg h-20 animate-pulse"></div>
               ))
             ) : constructorStandings.length > 0 ? (
-              // Show top 3 teams
               constructorStandings.slice(0, 3).map((team, index) => (
                 <div 
                   key={index} 
@@ -247,7 +232,6 @@ const Index = () => {
                 </div>
               ))
             ) : (
-              // No data state
               <div className="text-center py-10">
                 <p className="text-gray-400">No constructor standings available for {selectedSeason} season yet.</p>
               </div>
@@ -255,7 +239,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Upcoming Races Section */}
         <section className="py-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
@@ -270,17 +253,14 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
             {racesLoading ? (
-              // Loading state
               Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="bg-f1-gray/10 rounded-lg h-72 animate-pulse"></div>
               ))
             ) : upcomingRaces.length > 0 ? (
-              // Show upcoming races
               upcomingRaces.map((race, index) => (
-                <RaceCard key={index} {...race} />
+                <RaceCard key={race.id} {...race} season="2025" />
               ))
             ) : (
-              // No upcoming races
               <div className="col-span-3 text-center py-10">
                 <p className="text-gray-400">No upcoming races available for {selectedSeason} season yet.</p>
               </div>
@@ -288,7 +268,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Latest News Section */}
         <section className="py-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <div>
@@ -308,7 +287,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Newsletter Section */}
         <section className="py-20 bg-gradient-to-r from-f1-red/20 to-f1-gray/20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center animate-on-scroll">

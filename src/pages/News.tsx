@@ -18,7 +18,7 @@ const News = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // Mock 2025 news data
+  // Fixed news data for 2025
   const mockNewsItems = [
     {
       id: 1,
@@ -168,6 +168,7 @@ const News = () => {
           item.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
         );
       
+      console.log("Filtered news items:", filteredNews);
       setNewsItems(filteredNews.slice(0, page * 6));
       setHasMore(filteredNews.length > page * 6);
       setLoading(false);
@@ -179,7 +180,7 @@ const News = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-f1-black text-white">
       <Navbar />
       
       <main className="flex-grow pt-20">

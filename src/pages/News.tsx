@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Newspaper, Search, Filter, Tag, Calendar, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -168,11 +167,10 @@ const News = () => {
           item.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
         );
       
-      console.log("Filtered news items:", filteredNews);
       setNewsItems(filteredNews.slice(0, page * 6));
       setHasMore(filteredNews.length > page * 6);
       setLoading(false);
-    }, 800);
+    }, 300);
   }, [selectedCategory, searchTerm, page]);
 
   const loadMore = () => {
@@ -187,7 +185,7 @@ const News = () => {
         {/* Header */}
         <div className="bg-gradient-to-r from-f1-black to-f1-black/90 border-b border-f1-gray/20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 animate-fade-in">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6">
               <div>
                 <h1 className="text-3xl md:text-4xl font-formula font-bold text-white flex items-center mb-2">
                   <Newspaper className="h-8 w-8 mr-3 text-f1-red" />
@@ -200,7 +198,7 @@ const News = () => {
             </div>
             
             {/* Search and Filters */}
-            <div className="mt-6 animate-fade-in">
+            <div className="mt-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-grow">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -255,21 +253,6 @@ const News = () => {
                       ))}
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="flex items-center text-white mb-2 text-sm">
-                      <Calendar className="h-4 w-4 mr-2 text-f1-red" />
-                      Date Range
-                    </label>
-                    <div className="flex gap-2">
-                      <select className="bg-f1-gray/20 border border-f1-gray/30 text-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-f1-red/50 transition-all duration-200">
-                        <option value="all">All Time</option>
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                      </select>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -308,7 +291,7 @@ const News = () => {
           {/* News Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {newsItems.map((news) => (
-              <div key={news.id} className="animate-on-scroll">
+              <div key={news.id}>
                 <NewsCard {...news} />
               </div>
             ))}

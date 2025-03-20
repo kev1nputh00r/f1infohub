@@ -22,6 +22,21 @@ const NewsCard = ({
   url,
   season = "2025",
 }: NewsCardProps) => {
+  // Function to get a relevant sports news website based on category
+  const getSportsNewsUrl = () => {
+    // Map categories to relevant sports news websites
+    const websiteMap: Record<string, string> = {
+      'Race Report': 'https://www.formula1.com/en/latest/article.race-report.html',
+      'Team News': 'https://www.autosport.com/f1/news/',
+      'Driver News': 'https://www.motorsport.com/f1/news/',
+      'Technical': 'https://the-race.com/formula-1/',
+      'Opinion': 'https://www.racefans.net/category/regular-features/comment/',
+      'Interview': 'https://racingnews365.com/f1-news',
+    };
+    
+    return websiteMap[category] || 'https://www.formula1.com/en/latest.html';
+  };
+
   return (
     <div className="rounded-lg bg-f1-gray/10 h-full flex flex-col border border-f1-gray/20">
       <div className="aspect-w-16 aspect-h-10 overflow-hidden relative">
@@ -63,7 +78,7 @@ const NewsCard = ({
         </p>
         
         <a 
-          href={url} 
+          href={getSportsNewsUrl()} 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center text-white bg-f1-gray rounded-md px-3 py-2 text-sm font-medium mt-auto"

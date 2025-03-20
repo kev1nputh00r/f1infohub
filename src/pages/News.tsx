@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Newspaper, Search, Filter, Tag, Calendar, ChevronDown } from 'lucide-react';
+import { Newspaper, Search, Filter, Tag, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import NewsCard from '@/components/ui/NewsCard';
@@ -7,6 +7,142 @@ import { cn } from '@/lib/utils';
 
 // Define categories
 const CATEGORIES = ['All', 'Race Report', 'Team News', 'Driver News', 'Technical', 'Opinion', 'Interview'];
+
+// Fixed news data for 2025
+const mockNewsItems = [
+  {
+    id: 1,
+    title: "Lando Norris Dominates Season Opener in Bahrain",
+    excerpt: "Lando Norris secured a dominant victory at the 2025 Bahrain Grand Prix, leading from pole to flag as McLaren sets the pace for the new season.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/68eyZ1B0/s1000/formula-1-dutch-gp-2023-max-ve.jpg",
+    date: "Mar 2, 2025",
+    time: "5:30 PM",
+    category: "Race Report",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 2,
+    title: "Ferrari Unveils Revolutionary Aerodynamic Package",
+    excerpt: "Ferrari has introduced a radical new floor and diffuser design that they believe will challenge McLaren's early season advantage at the Saudi Arabian GP.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1nLeMY/s1000/mercedes-w14-technical-detail.jpg",
+    date: "Mar 5, 2025",
+    time: "10:15 AM",
+    category: "Technical",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 3,
+    title: "Red Bull Racing Addresses Early Season Performance Gaps",
+    excerpt: "After a challenging start to the 2025 season, Red Bull Racing's technical director reveals plans to recover their performance advantage.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZgbd0/s1000/charles-leclerc-ferrari-sf-23-.jpg",
+    date: "Mar 6, 2025",
+    time: "2:45 PM",
+    category: "Team News",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 4,
+    title: "Hamilton: 'Mercedes Finally Has a Car We Can Fight With'",
+    excerpt: "Lewis Hamilton expresses confidence in Mercedes' 2025 challenger after securing a podium in the season opener, marking a significant improvement over their 2024 form.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99JQR8Y/s1000/lewis-hamilton-mercedes-f1-w14.jpg",
+    date: "Mar 3, 2025",
+    time: "9:20 AM",
+    category: "Interview",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 5,
+    title: "Bearman Impresses in Sauber Debut",
+    excerpt: "Oliver Bearman has made a strong impression in his full-time Formula 1 debut, scoring points for Sauber in his first race of the 2025 season.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/6D1nEAJ0/s1000/lando-norris-mclaren-f1-team-.jpg",
+    date: "Mar 4, 2025",
+    time: "11:45 AM",
+    category: "Driver News",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 6,
+    title: "FIA Introduces New DRS Activation Rules for 2025",
+    excerpt: "The sport's governing body has implemented new DRS regulations aimed at improving racing without making overtaking too easy.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/6AQ5Pnz0/s1000/fia-flags-1.jpg",
+    date: "Mar 7, 2025",
+    time: "3:30 PM",
+    category: "Technical",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 7,
+    title: "Alpine Shows Signs of Resurgence Under New Leadership",
+    excerpt: "After a difficult 2024 campaign, Alpine appears to have turned a corner with their new technical structure yielding immediate results in 2025.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/68yN3N40/s1000/alpine-f1-team-logo-1.jpg",
+    date: "Mar 5, 2025",
+    time: "1:15 PM",
+    category: "Team News",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 8,
+    title: "Alonso: '2025 Could Be My Final Season in Formula 1'",
+    excerpt: "Fernando Alonso has hinted that the 2025 season might be his last in Formula 1, as he evaluates his future in motorsport at the age of 43.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/0k7D47j0/s1000/fernando-alonso-aston-martin-f.jpg",
+    date: "Mar 8, 2025",
+    time: "10:30 AM",
+    category: "Interview",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 9,
+    title: "Opinion: The 2025 Season Already Promises More Competition",
+    excerpt: "After just one race, the 2025 Formula 1 season is shaping up to be one of the most competitive in recent history with four teams in genuine contention.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1G4OA0/s1000/formula-1-f1-logo-1.jpg",
+    date: "Mar 4, 2025",
+    time: "4:00 PM",
+    category: "Opinion",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 10,
+    title: "Haas Confirms Interest in Zhou for 2026 Seat",
+    excerpt: "Haas team principal has confirmed the team's interest in retaining Zhou Guanyu for 2026 following his strong start to the 2025 campaign.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/6Vxj3wA0/s1000/carlos-sainz-scuderia-ferrari-.jpg",
+    date: "Mar 6, 2025",
+    time: "12:20 PM",
+    category: "Driver News",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 11,
+    title: "Norris's Performance Reminiscent of Early Hamilton Era, Says Brawn",
+    excerpt: "Ross Brawn has drawn parallels between Lando Norris's current form and Lewis Hamilton's early dominance with McLaren after his impressive start to 2025.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99E3ReY/s1000/max-verstappen-red-bull-racing.jpg",
+    date: "Mar 7, 2025",
+    time: "9:45 AM",
+    category: "Opinion",
+    url: "#",
+    season: "2025"
+  },
+  {
+    id: 12,
+    title: "McLaren Unveils Special Livery for Saudi Arabian Grand Prix",
+    excerpt: "McLaren Racing has revealed a special one-off livery for the Saudi Arabian Grand Prix, celebrating their new title sponsor's Middle Eastern heritage.",
+    imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZd5d0/s1000/red-bull-racing-rb19-1.jpg",
+    date: "Mar 8, 2025",
+    time: "8:30 AM",
+    category: "Team News",
+    url: "#",
+    season: "2025"
+  },
+];
 
 const News = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,142 +152,6 @@ const News = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
-  // Fixed news data for 2025
-  const mockNewsItems = [
-    {
-      id: 1,
-      title: "Lando Norris Dominates Season Opener in Bahrain",
-      excerpt: "Lando Norris secured a dominant victory at the 2025 Bahrain Grand Prix, leading from pole to flag as McLaren sets the pace for the new season.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/68eyZ1B0/s1000/formula-1-dutch-gp-2023-max-ve.jpg",
-      date: "Mar 2, 2025",
-      time: "5:30 PM",
-      category: "Race Report",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 2,
-      title: "Ferrari Unveils Revolutionary Aerodynamic Package",
-      excerpt: "Ferrari has introduced a radical new floor and diffuser design that they believe will challenge McLaren's early season advantage at the Saudi Arabian GP.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1nLeMY/s1000/mercedes-w14-technical-detail.jpg",
-      date: "Mar 5, 2025",
-      time: "10:15 AM",
-      category: "Technical",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 3,
-      title: "Red Bull Racing Addresses Early Season Performance Gaps",
-      excerpt: "After a challenging start to the 2025 season, Red Bull Racing's technical director reveals plans to recover their performance advantage.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZgbd0/s1000/charles-leclerc-ferrari-sf-23-.jpg",
-      date: "Mar 6, 2025",
-      time: "2:45 PM",
-      category: "Team News",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 4,
-      title: "Hamilton: 'Mercedes Finally Has a Car We Can Fight With'",
-      excerpt: "Lewis Hamilton expresses confidence in Mercedes' 2025 challenger after securing a podium in the season opener, marking a significant improvement over their 2024 form.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99JQR8Y/s1000/lewis-hamilton-mercedes-f1-w14.jpg",
-      date: "Mar 3, 2025",
-      time: "9:20 AM",
-      category: "Interview",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 5,
-      title: "Bearman Impresses in Sauber Debut",
-      excerpt: "Oliver Bearman has made a strong impression in his full-time Formula 1 debut, scoring points for Sauber in his first race of the 2025 season.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/6D1nEAJ0/s1000/lando-norris-mclaren-f1-team-.jpg",
-      date: "Mar 4, 2025",
-      time: "11:45 AM",
-      category: "Driver News",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 6,
-      title: "FIA Introduces New DRS Activation Rules for 2025",
-      excerpt: "The sport's governing body has implemented new DRS regulations aimed at improving racing without making overtaking too easy.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/6AQ5Pnz0/s1000/fia-flags-1.jpg",
-      date: "Mar 7, 2025",
-      time: "3:30 PM",
-      category: "Technical",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 7,
-      title: "Alpine Shows Signs of Resurgence Under New Leadership",
-      excerpt: "After a difficult 2024 campaign, Alpine appears to have turned a corner with their new technical structure yielding immediate results in 2025.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/68yN3N40/s1000/alpine-f1-team-logo-1.jpg",
-      date: "Mar 5, 2025",
-      time: "1:15 PM",
-      category: "Team News",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 8,
-      title: "Alonso: '2025 Could Be My Final Season in Formula 1'",
-      excerpt: "Fernando Alonso has hinted that the 2025 season might be his last in Formula 1, as he evaluates his future in motorsport at the age of 43.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/0k7D47j0/s1000/fernando-alonso-aston-martin-f.jpg",
-      date: "Mar 8, 2025",
-      time: "10:30 AM",
-      category: "Interview",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 9,
-      title: "Opinion: The 2025 Season Already Promises More Competition",
-      excerpt: "After just one race, the 2025 Formula 1 season is shaping up to be one of the most competitive in recent history with four teams in genuine contention.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/0L1G4OA0/s1000/formula-1-f1-logo-1.jpg",
-      date: "Mar 4, 2025",
-      time: "4:00 PM",
-      category: "Opinion",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 10,
-      title: "Haas Confirms Interest in Zhou for 2026 Seat",
-      excerpt: "Haas team principal has confirmed the team's interest in retaining Zhou Guanyu for 2026 following his strong start to the 2025 campaign.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/6Vxj3wA0/s1000/carlos-sainz-scuderia-ferrari-.jpg",
-      date: "Mar 6, 2025",
-      time: "12:20 PM",
-      category: "Driver News",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 11,
-      title: "Norris's Performance Reminiscent of Early Hamilton Era, Says Brawn",
-      excerpt: "Ross Brawn has drawn parallels between Lando Norris's current form and Lewis Hamilton's early dominance with McLaren after his impressive start to 2025.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/Y99E3ReY/s1000/max-verstappen-red-bull-racing.jpg",
-      date: "Mar 7, 2025",
-      time: "9:45 AM",
-      category: "Opinion",
-      url: "#",
-      season: "2025"
-    },
-    {
-      id: 12,
-      title: "McLaren Unveils Special Livery for Saudi Arabian Grand Prix",
-      excerpt: "McLaren Racing has revealed a special one-off livery for the Saudi Arabian Grand Prix, celebrating their new title sponsor's Middle Eastern heritage.",
-      imageUrl: "https://cdn-1.motorsport.com/images/amp/2jXZd5d0/s1000/red-bull-racing-rb19-1.jpg",
-      date: "Mar 8, 2025",
-      time: "8:30 AM",
-      category: "Team News",
-      url: "#",
-      season: "2025"
-    },
-  ];
 
   useEffect(() => {
     // Simulate loading data

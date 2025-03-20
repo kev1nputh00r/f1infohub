@@ -35,16 +35,19 @@ const NewsCard = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="aspect-w-16 aspect-h-10 overflow-hidden">
+      <div className="aspect-w-16 aspect-h-10 overflow-hidden relative">
         <div className="absolute inset-0 bg-gradient-to-t from-f1-black/20 to-transparent z-10" />
         <img
-          src={imageUrl}
+          src={imageUrl || 'https://cdn-1.motorsport.com/images/amp/0L1G4OA0/s1000/formula-1-f1-logo-1.jpg'}
           alt={title}
           className={cn(
             "w-full h-full object-cover transition-transform duration-700 ease-in-out",
             isHovered && "scale-110"
           )}
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = 'https://cdn-1.motorsport.com/images/amp/0L1G4OA0/s1000/formula-1-f1-logo-1.jpg';
+          }}
         />
         <div className="absolute top-3 left-3 z-20">
           <span className="inline-flex items-center rounded-full bg-f1-red/90 px-2.5 py-0.5 text-xs font-medium text-white shadow-sm">

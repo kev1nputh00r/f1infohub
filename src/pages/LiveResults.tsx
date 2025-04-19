@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Flag, Clock, ChevronDown, ChevronUp, Award, Gauge, RotateCcw } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SessionResults from '@/components/ui/SessionResults';
-import { cn } from '@/lib/utils';
+import LiveResultsHeader from '@/components/live-results/LiveResultsHeader';
+import SessionTabs from '@/components/live-results/SessionTabs';
+import RaceResults from '@/components/live-results/RaceResults';
 
 interface Driver {
   position: number;
@@ -33,11 +34,9 @@ const LiveResults = () => {
   });
 
   useEffect(() => {
-    // Simulated data fetch
     const fetchData = () => {
       setLoading(true);
       
-      // Mocked data to simulate a live API
       const mockDrivers: Driver[] = [
         {
           position: 1,
@@ -329,7 +328,6 @@ const LiveResults = () => {
     
     fetchData();
     
-    // Simulated real-time updates
     const interval = setInterval(() => {
       fetchData();
     }, 5000);
@@ -359,26 +357,13 @@ const LiveResults = () => {
     });
   };
   
-  const getSortIconForColumn = (columnName: keyof Driver) => {
-    if (sortConfig.key !== columnName) {
-      return null;
-    }
-    
-    return sortConfig.direction === 'ascending' ? (
-      <ChevronUp className="h-4 w-4" />
-    ) : (
-      <ChevronDown className="h-4 w-4" />
-    );
-  };
-  
   const refreshData = () => {
     setLoading(true);
-    // Simulated delay for refresh
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   };
-  
+
   const sessions = {
     fp1: {
       title: "Practice 1",
@@ -449,244 +434,29 @@ const LiveResults = () => {
       <Navbar />
       
       <main className="flex-grow pt-20">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-f1-black to-f1-black/90 border-b border-f1-gray/20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 animate-fade-in">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-formula font-bold text-white mb-2">
-                  Italian Grand Prix - Live Results
-                </h1>
-                <p className="text-gray-400">
-                  Monza Circuit, Italy
-                </p>
-              </div>
-              
-              <div className="flex items-center mt-4 md:mt-0">
-                <button 
-                  onClick={refreshData}
-                  className="inline-flex items-center bg-f1-gray/30 hover:bg-f1-gray/50 text-white px-4 py-2 rounded-md transition-colors duration-300"
-                >
-                  <RotateCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin-slow")} />
-                  Refresh
-                </button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-              <div className="bg-f1-gray/10 rounded-lg p-4 flex items-center">
-                <div className="bg-f1-red/20 rounded-full p-3 mr-4">
-                  <Flag className="h-6 w-6 text-f1-red" />
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm">Race Progress</p>
-                  <div className="flex items-baseline">
-                    <span className="text-white text-xl font-formula font-bold">Lap {lapCount}</span>
-                    <span className="text-gray-400 text-sm ml-1">/ {totalLaps}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-f1-gray/10 rounded-lg p-4 flex items-center">
-                <div className="bg-f1-red/20 rounded-full p-3 mr-4">
-                  <Clock className="h-6 w-6 text-f1-red" />
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm">Last Updated</p>
-                  <p className="text-white text-lg">
-                    {lastUpdated.toLocaleTimeString()}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="bg-f1-gray/10 rounded-lg p-4 flex items-center">
-                <div className="bg-f1-red/20 rounded-full p-3 mr-4">
-                  <Gauge className="h-6 w-6 text-f1-red" />
-                </div>
-                <div>
-                  <p className="text-gray-400 text-sm">Fastest Lap</p>
-                  <p className="text-white text-lg">
-                    Max Verstappen - 1:22.235
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Session Tabs */}
-            <div className="flex flex-wrap gap-2 mt-6">
-              {Object.entries(sessions).map(([key, session]) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveSession(key as typeof activeSession)}
-                  className={cn(
-                    "px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                    activeSession === key
-                      ? "bg-f1-red text-white"
-                      : "bg-f1-gray/20 text-gray-300 hover:bg-f1-gray/30"
-                  )}
-                >
-                  {session.title}
-                  <span className="ml-2 text-xs opacity-70">{session.time}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <LiveResultsHeader
+          lapCount={lapCount}
+          totalLaps={totalLaps}
+          lastUpdated={lastUpdated}
+          loading={loading}
+          onRefresh={refreshData}
+        />
         
-        {/* Results Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="relative">
-            {/* Loading Overlay */}
-            <div className={cn(
-              "absolute inset-0 flex items-center justify-center bg-f1-black/80 z-10 transition-opacity duration-300",
-              loading ? "opacity-100" : "opacity-0 pointer-events-none"
-            )}>
-              <div className="flex flex-col items-center">
-                <div className="h-12 w-12 rounded-full border-4 border-f1-red border-t-transparent animate-spin mb-4" />
-                <p className="text-white font-medium">Updating results...</p>
-              </div>
-            </div>
-
-            {/* Session Results */}
+          <SessionTabs
+            sessions={sessions}
+            activeSession={activeSession}
+            onSessionChange={(session) => setActiveSession(session as typeof activeSession)}
+          />
+          
+          <div className="relative mt-6">
             {activeSession === 'race' ? (
-              <div className="relative overflow-x-auto">
-                <div className={cn(
-                  "absolute inset-0 flex items-center justify-center bg-f1-black/80 z-10 transition-opacity duration-300",
-                  loading ? "opacity-100" : "opacity-0 pointer-events-none"
-                )}>
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full border-4 border-f1-red border-t-transparent animate-spin mb-4" />
-                    <p className="text-white font-medium">Updating results...</p>
-                  </div>
-                </div>
-                
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-gray-400 uppercase bg-f1-gray/10 sticky top-0">
-                    <tr>
-                      <th 
-                        scope="col" 
-                        className="px-4 py-3 cursor-pointer"
-                        onClick={() => requestSort('position')}
-                      >
-                        <div className="flex items-center">
-                          Pos
-                          {getSortIconForColumn('position')}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-4 py-3">Driver</th>
-                      <th scope="col" className="px-4 py-3 hidden md:table-cell">Team</th>
-                      <th 
-                        scope="col" 
-                        className="px-4 py-3"
-                        onClick={() => requestSort('gap')}
-                      >
-                        <div className="flex items-center cursor-pointer">
-                          Gap
-                          {getSortIconForColumn('gap')}
-                        </div>
-                      </th>
-                      <th 
-                        scope="col" 
-                        className="px-4 py-3 hidden lg:table-cell cursor-pointer"
-                        onClick={() => requestSort('lapTime')}
-                      >
-                        <div className="flex items-center">
-                          Last Lap
-                          {getSortIconForColumn('lapTime')}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-4 py-3 hidden xl:table-cell">Sectors</th>
-                      <th 
-                        scope="col" 
-                        className="px-4 py-3 hidden sm:table-cell cursor-pointer"
-                        onClick={() => requestSort('pitStops')}
-                      >
-                        <div className="flex items-center">
-                          Pit
-                          {getSortIconForColumn('pitStops')}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-4 py-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {drivers.map((driver, index) => (
-                      <tr 
-                        key={index} 
-                        className={cn(
-                          "border-b border-f1-gray/10 hover:bg-f1-gray/5 transition-colors duration-150",
-                          driver.status === 'pitted' && "bg-f1-gray/20",
-                          driver.status === 'out' && "bg-f1-gray/30 opacity-60"
-                        )}
-                      >
-                        <td className="px-4 py-4 font-formula font-bold text-lg text-white">
-                          {driver.position}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex items-center">
-                            <div 
-                              className="w-1 h-8 mr-3 rounded-sm"
-                              style={{ backgroundColor: driver.teamColor }}
-                            />
-                            <div>
-                              <div className="font-medium text-white">
-                                {driver.name}
-                                {driver.fastestLap && (
-                                  <span className="ml-2 inline-flex items-center rounded-full bg-purple-500/30 px-2 py-0.5 text-xs font-medium text-purple-200">
-                                    <Award className="h-3 w-3 mr-1" />
-                                    Fastest
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-gray-300 hidden md:table-cell">
-                          {driver.team}
-                        </td>
-                        <td className="px-4 py-4 font-medium text-white">
-                          {driver.gap}
-                        </td>
-                        <td className="px-4 py-4 text-gray-300 hidden lg:table-cell">
-                          {driver.lapTime}
-                        </td>
-                        <td className="px-4 py-4 hidden xl:table-cell">
-                          <div className="flex space-x-1">
-                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                              S1: <span className={driver.sector1 < 28.5 ? "text-purple-400" : driver.sector1 < 29 ? "text-green-400" : "text-white"}>
-                                {driver.sector1}
-                              </span>
-                            </div>
-                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                              S2: <span className={driver.sector2 < 24.2 ? "text-purple-400" : driver.sector2 < 24.3 ? "text-green-400" : "text-white"}>
-                                {driver.sector2}
-                              </span>
-                            </div>
-                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                              S3: <span className={driver.sector3 < 29.6 ? "text-purple-400" : driver.sector3 < 29.65 ? "text-green-400" : "text-white"}>
-                                {driver.sector3}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-gray-300 hidden sm:table-cell">
-                          {driver.pitStops}
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className={cn(
-                            "px-2 py-1 rounded text-xs font-medium",
-                            driver.status === 'racing' && "bg-green-500/20 text-green-400",
-                            driver.status === 'pitted' && "bg-yellow-500/20 text-yellow-400",
-                            driver.status === 'out' && "bg-red-500/20 text-red-400",
-                          )}>
-                            {driver.status === 'racing' ? 'Racing' : driver.status === 'pitted' ? 'Pit Stop' : 'Retired'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <RaceResults
+                drivers={drivers}
+                loading={loading}
+                sortConfig={sortConfig}
+                onSort={requestSort}
+              />
             ) : (
               <SessionResults
                 title={sessions[activeSession].title}

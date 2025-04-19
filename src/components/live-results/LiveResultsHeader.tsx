@@ -9,6 +9,9 @@ interface LiveResultsHeaderProps {
   lastUpdated: Date;
   loading: boolean;
   onRefresh: () => void;
+  raceName?: string;
+  circuitName?: string;
+  country?: string;
 }
 
 const LiveResultsHeader = ({
@@ -16,7 +19,10 @@ const LiveResultsHeader = ({
   totalLaps,
   lastUpdated,
   loading,
-  onRefresh
+  onRefresh,
+  raceName = "Italian Grand Prix",
+  circuitName = "Monza Circuit",
+  country = "Italy"
 }: LiveResultsHeaderProps) => {
   return (
     <div className="bg-gradient-to-r from-f1-black to-f1-black/90 border-b border-f1-gray/20">
@@ -24,10 +30,10 @@ const LiveResultsHeader = ({
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 animate-fade-in">
           <div>
             <h1 className="text-3xl md:text-4xl font-formula font-bold text-white mb-2">
-              Italian Grand Prix - Live Results
+              {raceName} - Live Results
             </h1>
             <p className="text-gray-400">
-              Monza Circuit, Italy
+              {circuitName}, {country}
             </p>
           </div>
           
@@ -86,4 +92,3 @@ const LiveResultsHeader = ({
 };
 
 export default LiveResultsHeader;
-

@@ -97,7 +97,7 @@ const RaceCard = ({
             </div>
           </div>
           <Link 
-            to={`/races/${season}/${round}`}
+            to={`/live`}
             className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
           >
             <Flag className="w-4 h-4 mr-2" />

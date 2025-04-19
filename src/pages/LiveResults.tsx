@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { Flag, Clock, ChevronDown, ChevronUp, Award, Gauge, RotateCcw } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import SessionResults from '@/components/ui/SessionResults';
 import { cn } from '@/lib/utils';
 
 interface Driver {
@@ -21,6 +21,7 @@ interface Driver {
 }
 
 const LiveResults = () => {
+  const [activeSession, setActiveSession] = useState<'fp1' | 'fp2' | 'fp3' | 'qualifying' | 'race'>('race');
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [lapCount, setLapCount] = useState(23);
@@ -378,6 +379,71 @@ const LiveResults = () => {
     }, 1000);
   };
   
+  const sessions = {
+    fp1: {
+      title: "Practice 1",
+      time: "Friday 11:30",
+      completed: true,
+      drivers: drivers.map(d => ({
+        position: d.position,
+        name: d.name,
+        team: d.team,
+        teamColor: d.teamColor,
+        bestLapTime: d.lapTime,
+        gap: d.gap,
+        laps: 25
+      }))
+    },
+    fp2: {
+      title: "Practice 2",
+      time: "Friday 15:00",
+      completed: true,
+      drivers: drivers.map(d => ({
+        position: d.position,
+        name: d.name,
+        team: d.team,
+        teamColor: d.teamColor,
+        bestLapTime: d.lapTime,
+        gap: d.gap,
+        laps: 28
+      }))
+    },
+    fp3: {
+      title: "Practice 3",
+      time: "Saturday 10:30",
+      completed: true,
+      drivers: drivers.map(d => ({
+        position: d.position,
+        name: d.name,
+        team: d.team,
+        teamColor: d.teamColor,
+        bestLapTime: d.lapTime,
+        gap: d.gap,
+        laps: 22
+      }))
+    },
+    qualifying: {
+      title: "Qualifying",
+      time: "Saturday 15:00",
+      completed: true,
+      drivers: drivers.map(d => ({
+        position: d.position,
+        name: d.name,
+        team: d.team,
+        teamColor: d.teamColor,
+        bestLapTime: d.lapTime,
+        gap: d.gap,
+        laps: 18
+      }))
+    },
+    race: {
+      title: "Race",
+      time: "Sunday 15:00",
+      completed: false,
+      drivers: drivers
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -445,12 +511,32 @@ const LiveResults = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Session Tabs */}
+            <div className="flex flex-wrap gap-2 mt-6">
+              {Object.entries(sessions).map(([key, session]) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveSession(key as typeof activeSession)}
+                  className={cn(
+                    "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    activeSession === key
+                      ? "bg-f1-red text-white"
+                      : "bg-f1-gray/20 text-gray-300 hover:bg-f1-gray/30"
+                  )}
+                >
+                  {session.title}
+                  <span className="ml-2 text-xs opacity-70">{session.time}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         
-        {/* Race Results Table */}
+        {/* Results Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="relative overflow-x-auto">
+          <div className="relative">
+            {/* Loading Overlay */}
             <div className={cn(
               "absolute inset-0 flex items-center justify-center bg-f1-black/80 z-10 transition-opacity duration-300",
               loading ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -460,133 +546,154 @@ const LiveResults = () => {
                 <p className="text-white font-medium">Updating results...</p>
               </div>
             </div>
-            
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-gray-400 uppercase bg-f1-gray/10 sticky top-0">
-                <tr>
-                  <th 
-                    scope="col" 
-                    className="px-4 py-3 cursor-pointer"
-                    onClick={() => requestSort('position')}
-                  >
-                    <div className="flex items-center">
-                      Pos
-                      {getSortIconForColumn('position')}
-                    </div>
-                  </th>
-                  <th scope="col" className="px-4 py-3">Driver</th>
-                  <th scope="col" className="px-4 py-3 hidden md:table-cell">Team</th>
-                  <th 
-                    scope="col" 
-                    className="px-4 py-3"
-                    onClick={() => requestSort('gap')}
-                  >
-                    <div className="flex items-center cursor-pointer">
-                      Gap
-                      {getSortIconForColumn('gap')}
-                    </div>
-                  </th>
-                  <th 
-                    scope="col" 
-                    className="px-4 py-3 hidden lg:table-cell cursor-pointer"
-                    onClick={() => requestSort('lapTime')}
-                  >
-                    <div className="flex items-center">
-                      Last Lap
-                      {getSortIconForColumn('lapTime')}
-                    </div>
-                  </th>
-                  <th scope="col" className="px-4 py-3 hidden xl:table-cell">Sectors</th>
-                  <th 
-                    scope="col" 
-                    className="px-4 py-3 hidden sm:table-cell cursor-pointer"
-                    onClick={() => requestSort('pitStops')}
-                  >
-                    <div className="flex items-center">
-                      Pit
-                      {getSortIconForColumn('pitStops')}
-                    </div>
-                  </th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {drivers.map((driver, index) => (
-                  <tr 
-                    key={index} 
-                    className={cn(
-                      "border-b border-f1-gray/10 hover:bg-f1-gray/5 transition-colors duration-150",
-                      driver.status === 'pitted' && "bg-f1-gray/20",
-                      driver.status === 'out' && "bg-f1-gray/30 opacity-60"
-                    )}
-                  >
-                    <td className="px-4 py-4 font-formula font-bold text-lg text-white">
-                      {driver.position}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center">
-                        <div 
-                          className="w-1 h-8 mr-3 rounded-sm"
-                          style={{ backgroundColor: driver.teamColor }}
-                        />
-                        <div>
-                          <div className="font-medium text-white">
-                            {driver.name}
-                            {driver.fastestLap && (
-                              <span className="ml-2 inline-flex items-center rounded-full bg-purple-500/30 px-2 py-0.5 text-xs font-medium text-purple-200">
-                                <Award className="h-3 w-3 mr-1" />
-                                Fastest
-                              </span>
-                            )}
+
+            {/* Session Results */}
+            {activeSession === 'race' ? (
+              <div className="relative overflow-x-auto">
+                <div className={cn(
+                  "absolute inset-0 flex items-center justify-center bg-f1-black/80 z-10 transition-opacity duration-300",
+                  loading ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}>
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-full border-4 border-f1-red border-t-transparent animate-spin mb-4" />
+                    <p className="text-white font-medium">Updating results...</p>
+                  </div>
+                </div>
+                
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-gray-400 uppercase bg-f1-gray/10 sticky top-0">
+                    <tr>
+                      <th 
+                        scope="col" 
+                        className="px-4 py-3 cursor-pointer"
+                        onClick={() => requestSort('position')}
+                      >
+                        <div className="flex items-center">
+                          Pos
+                          {getSortIconForColumn('position')}
+                        </div>
+                      </th>
+                      <th scope="col" className="px-4 py-3">Driver</th>
+                      <th scope="col" className="px-4 py-3 hidden md:table-cell">Team</th>
+                      <th 
+                        scope="col" 
+                        className="px-4 py-3"
+                        onClick={() => requestSort('gap')}
+                      >
+                        <div className="flex items-center cursor-pointer">
+                          Gap
+                          {getSortIconForColumn('gap')}
+                        </div>
+                      </th>
+                      <th 
+                        scope="col" 
+                        className="px-4 py-3 hidden lg:table-cell cursor-pointer"
+                        onClick={() => requestSort('lapTime')}
+                      >
+                        <div className="flex items-center">
+                          Last Lap
+                          {getSortIconForColumn('lapTime')}
+                        </div>
+                      </th>
+                      <th scope="col" className="px-4 py-3 hidden xl:table-cell">Sectors</th>
+                      <th 
+                        scope="col" 
+                        className="px-4 py-3 hidden sm:table-cell cursor-pointer"
+                        onClick={() => requestSort('pitStops')}
+                      >
+                        <div className="flex items-center">
+                          Pit
+                          {getSortIconForColumn('pitStops')}
+                        </div>
+                      </th>
+                      <th scope="col" className="px-4 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {drivers.map((driver, index) => (
+                      <tr 
+                        key={index} 
+                        className={cn(
+                          "border-b border-f1-gray/10 hover:bg-f1-gray/5 transition-colors duration-150",
+                          driver.status === 'pitted' && "bg-f1-gray/20",
+                          driver.status === 'out' && "bg-f1-gray/30 opacity-60"
+                        )}
+                      >
+                        <td className="px-4 py-4 font-formula font-bold text-lg text-white">
+                          {driver.position}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center">
+                            <div 
+                              className="w-1 h-8 mr-3 rounded-sm"
+                              style={{ backgroundColor: driver.teamColor }}
+                            />
+                            <div>
+                              <div className="font-medium text-white">
+                                {driver.name}
+                                {driver.fastestLap && (
+                                  <span className="ml-2 inline-flex items-center rounded-full bg-purple-500/30 px-2 py-0.5 text-xs font-medium text-purple-200">
+                                    <Award className="h-3 w-3 mr-1" />
+                                    Fastest
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-gray-300 hidden md:table-cell">
-                      {driver.team}
-                    </td>
-                    <td className="px-4 py-4 font-medium text-white">
-                      {driver.gap}
-                    </td>
-                    <td className="px-4 py-4 text-gray-300 hidden lg:table-cell">
-                      {driver.lapTime}
-                    </td>
-                    <td className="px-4 py-4 hidden xl:table-cell">
-                      <div className="flex space-x-1">
-                        <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                          S1: <span className={driver.sector1 < 28.5 ? "text-purple-400" : driver.sector1 < 29 ? "text-green-400" : "text-white"}>
-                            {driver.sector1}
+                        </td>
+                        <td className="px-4 py-4 text-gray-300 hidden md:table-cell">
+                          {driver.team}
+                        </td>
+                        <td className="px-4 py-4 font-medium text-white">
+                          {driver.gap}
+                        </td>
+                        <td className="px-4 py-4 text-gray-300 hidden lg:table-cell">
+                          {driver.lapTime}
+                        </td>
+                        <td className="px-4 py-4 hidden xl:table-cell">
+                          <div className="flex space-x-1">
+                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
+                              S1: <span className={driver.sector1 < 28.5 ? "text-purple-400" : driver.sector1 < 29 ? "text-green-400" : "text-white"}>
+                                {driver.sector1}
+                              </span>
+                            </div>
+                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
+                              S2: <span className={driver.sector2 < 24.2 ? "text-purple-400" : driver.sector2 < 24.3 ? "text-green-400" : "text-white"}>
+                                {driver.sector2}
+                              </span>
+                            </div>
+                            <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
+                              S3: <span className={driver.sector3 < 29.6 ? "text-purple-400" : driver.sector3 < 29.65 ? "text-green-400" : "text-white"}>
+                                {driver.sector3}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-gray-300 hidden sm:table-cell">
+                          {driver.pitStops}
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className={cn(
+                            "px-2 py-1 rounded text-xs font-medium",
+                            driver.status === 'racing' && "bg-green-500/20 text-green-400",
+                            driver.status === 'pitted' && "bg-yellow-500/20 text-yellow-400",
+                            driver.status === 'out' && "bg-red-500/20 text-red-400",
+                          )}>
+                            {driver.status === 'racing' ? 'Racing' : driver.status === 'pitted' ? 'Pit Stop' : 'Retired'}
                           </span>
-                        </div>
-                        <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                          S2: <span className={driver.sector2 < 24.2 ? "text-purple-400" : driver.sector2 < 24.3 ? "text-green-400" : "text-white"}>
-                            {driver.sector2}
-                          </span>
-                        </div>
-                        <div className="text-xs px-2 py-1 rounded bg-f1-gray/20 text-gray-300">
-                          S3: <span className={driver.sector3 < 29.6 ? "text-purple-400" : driver.sector3 < 29.65 ? "text-green-400" : "text-white"}>
-                            {driver.sector3}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-gray-300 hidden sm:table-cell">
-                      {driver.pitStops}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={cn(
-                        "px-2 py-1 rounded text-xs font-medium",
-                        driver.status === 'racing' && "bg-green-500/20 text-green-400",
-                        driver.status === 'pitted' && "bg-yellow-500/20 text-yellow-400",
-                        driver.status === 'out' && "bg-red-500/20 text-red-400",
-                      )}>
-                        {driver.status === 'racing' ? 'Racing' : driver.status === 'pitted' ? 'Pit Stop' : 'Retired'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <SessionResults
+                title={sessions[activeSession].title}
+                sessionType={activeSession === 'qualifying' ? 'qualifying' : 'practice'}
+                drivers={sessions[activeSession].drivers}
+              />
+            )}
           </div>
         </div>
       </main>

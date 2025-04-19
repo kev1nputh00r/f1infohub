@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Flag } from 'lucide-react';
@@ -97,7 +96,7 @@ const RaceCard = ({
             </div>
           </div>
           <Link 
-            to={`/live`}
+            to={`/races/${season}/${round}`}
             className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
           >
             <Flag className="w-4 h-4 mr-2" />

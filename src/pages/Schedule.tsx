@@ -7,7 +7,6 @@ import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
 import { initScrollAnimations } from '@/lib/animation';
 import RaceWeekModal from "@/components/ui/RaceWeekModal";
-import YouTubeHighlightModal from "@/components/ui/YouTubeHighlightModal";
 
 const TIMEZONES = [
   { value: 'local', label: 'Local Time' },
@@ -61,6 +60,15 @@ const Schedule = () => {
     if (timezone === 'jst') return '11:00 PM';
     
     return time;
+  };
+
+  const openYouTubeHighlight = (urlOrId: string, season: string, round: string) => {
+    if (urlOrId.startsWith('http')) {
+      window.open(urlOrId, '_blank');
+    } else {
+      const url = `https://www.youtube.com/watch?v=${urlOrId}`;
+      window.open(url, '_blank');
+    }
   };
 
   useEffect(() => {
@@ -274,11 +282,7 @@ const Schedule = () => {
                     {isHighlightEligible && (
                       <button
                         className="absolute top-4 left-4 z-30 bg-f1-red/90 hover:bg-f1-red text-white px-3 py-1 rounded-full text-xs font-semibold shadow transition-colors duration-200"
-                        onClick={() => {
-                          setHighlightVideoId(YOUTUBE_HIGHLIGHT_IDS[selectedSeason][race.round]);
-                          setHighlightRaceName(race.name);
-                          setHighlightModalOpen(true);
-                        }}
+                        onClick={() => openYouTubeHighlight(YOUTUBE_HIGHLIGHT_IDS[selectedSeason][race.round], selectedSeason, race.round)}
                         title="Watch YouTube Highlights"
                       >
                         Watch Highlights
@@ -302,13 +306,6 @@ const Schedule = () => {
           sessions={getRaceWeekSessions(selectedRace)}
         />
       )}
-      
-      <YouTubeHighlightModal
-        open={highlightModalOpen}
-        onOpenChange={(open) => setHighlightModalOpen(open)}
-        videoId={highlightVideoId}
-        raceName={highlightRaceName}
-      />
       
       <Footer />
     </div>

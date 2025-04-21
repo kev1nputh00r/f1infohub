@@ -2,13 +2,23 @@
 import { useParams, Link } from "react-router-dom";
 import { useCircuits } from "@/hooks/useCircuits";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Globe } from "lucide-react";
+import { useWikipediaSummary } from "@/hooks/useWikipediaSummary";
 
 const CircuitDetails = () => {
   const { circuitId } = useParams<{ circuitId: string }>();
   const { data: circuits = [] } = useCircuits("2025");
 
   const circuit = circuits.find((c: any) => c.circuitId === circuitId);
+
+  // Try to match Wikipedia page title
+  const wikipediaTitle = circuit?.circuitName;
+
+  const {
+    data: wikipedia,
+    isLoading: wikiLoading,
+    error: wikiError,
+  } = useWikipediaSummary(wikipediaTitle);
 
   if (!circuit) {
     return (
@@ -46,6 +56,32 @@ const CircuitDetails = () => {
               {circuit.circuitId}
             </div>
           </CardDescription>
+          <div className="mt-6">
+            <h2 className="font-semibold mb-2 flex items-center">
+              <Globe className="w-4 h-4 mr-2" />
+              Wikipedia
+            </h2>
+            {wikiLoading && (
+              <div className="text-muted-foreground">Loading more info…</div>
+            )}
+            {!wikiLoading && wikiError && (
+              <div className="text-destructive">No Wikipedia info found.</div>
+            )}
+            {!wikiLoading && wikipedia?.summary && (
+              <div className="mb-2 text-base text-muted-foreground">{wikipedia.summary}</div>
+            )}
+            {!wikiLoading && wikipedia?.url && (
+              <a
+                href={wikipedia.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center bg-blue-600 text-white px-4 py-2 mt-2 rounded hover:bg-blue-700 transition"
+              >
+                <Globe className="mr-2 w-4 h-4" />
+                View on Wikipedia
+              </a>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

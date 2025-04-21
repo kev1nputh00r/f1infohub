@@ -16,6 +16,7 @@ interface RaceCardProps {
   isCurrentRace?: boolean;
   season: string;
   round: string;
+  onViewLiveResults?: (() => void) | undefined;
 }
 
 const RaceCard = ({
@@ -31,8 +32,16 @@ const RaceCard = ({
   isCurrentRace = false,
   season,
   round,
+  onViewLiveResults,
 }: RaceCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleLiveClick = (e: React.MouseEvent) => {
+    if (onViewLiveResults) {
+      e.preventDefault();
+      onViewLiveResults();
+    }
+  };
 
   return (
     <div
@@ -95,13 +104,23 @@ const RaceCard = ({
               <span>{time}</span>
             </div>
           </div>
-          <Link 
-            to={`/races/${season}/${round}`}
-            className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
-          >
-            <Flag className="w-4 h-4 mr-2" />
-            {isCurrentRace ? "View Live Results" : isPastRace ? "View Results" : "View Details"}
-          </Link>
+          {isCurrentRace && onViewLiveResults ? (
+            <button
+              onClick={handleLiveClick}
+              className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
+            >
+              <Flag className="w-4 h-4 mr-2" />
+              View Live Results
+            </button>
+          ) : (
+            <Link
+              to={`/races/${season}/${round}`}
+              className="mt-3 flex items-center justify-center w-full bg-f1-red hover:bg-f1-red/90 text-white py-2 rounded transition-colors duration-300 text-sm font-medium"
+            >
+              <Flag className="w-4 h-4 mr-2" />
+              {isCurrentRace ? "View Live Results" : isPastRace ? "View Results" : "View Details"}
+            </Link>
+          )}
         </div>
       </div>
 

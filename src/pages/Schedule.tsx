@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Calendar, MapPin, Clock, Filter, ChevronDown, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -7,8 +6,8 @@ import RaceCard from '@/components/ui/RaceCard';
 import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
 import { initScrollAnimations } from '@/lib/animation';
+import RaceWeekModal from "@/components/ui/RaceWeekModal";
 
-// Define time zones
 const TIMEZONES = [
   { value: 'local', label: 'Local Time' },
   { value: 'utc', label: 'UTC' },
@@ -17,32 +16,27 @@ const TIMEZONES = [
   { value: 'jst', label: 'JST (UTC+9)' },
 ];
 
-// Define seasons
 const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
 const Schedule = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('local');
   const [selectedSeason, setSelectedSeason] = useState('2024');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'past', 'all'
-  
-  // Fetch race schedule data
+  const [activeTab, setActiveTab] = useState('upcoming');
+  const [raceWeekModalOpen, setRaceWeekModalOpen] = useState(false);
+  const [selectedRace, setSelectedRace] = useState<any | null>(null);
+
   const { races, loading } = useRaceSchedule(selectedSeason);
-  
-  // Filter races based on the active tab
+
   const filteredRaces = races.filter(race => {
     if (activeTab === 'upcoming') return race.isUpcoming;
     if (activeTab === 'past') return race.isPastRace;
-    return true; // 'all' tab
+    return true;
   });
 
-  // Adjust time based on selected timezone (simplified example)
   const adjustTime = (time: string, timezone: string) => {
-    // This is a simplified example
-    // In a real app, you would use a library like date-fns or moment-timezone
     if (timezone === 'local' || timezone === 'utc') return time;
     
-    // Simplified timezone adjustment (just for display purposes)
     if (timezone === 'est') return '10:00 AM';
     if (timezone === 'cet') return '4:00 PM';
     if (timezone === 'jst') return '11:00 PM';
@@ -51,17 +45,45 @@ const Schedule = () => {
   };
 
   useEffect(() => {
-    // Initialize scroll animations
     const cleanup = initScrollAnimations();
     return cleanup;
   }, []);
+
+  const getRaceWeekSessions = (race: any) => {
+    if (!race || race.season !== "2025") return [];
+    return [
+      {
+        name: "Practice 1",
+        date: race.date,
+        time: "10:00 AM",
+        completed: true,
+      },
+      {
+        name: "Practice 2",
+        date: race.date,
+        time: "2:00 PM",
+        completed: true,
+      },
+      {
+        name: "Qualifying",
+        date: race.date,
+        time: "5:00 PM",
+        completed: false,
+      },
+      {
+        name: "Race",
+        date: race.date,
+        time: race.time,
+        completed: false,
+      },
+    ];
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-20">
-        {/* Header */}
         <div className="bg-gradient-to-r from-f1-black to-f1-black/90 border-b border-f1-gray/20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 animate-fade-in">
@@ -87,7 +109,6 @@ const Schedule = () => {
               </div>
             </div>
             
-            {/* Filters Panel */}
             <div className={cn(
               "transition-all duration-300 ease-in-out overflow-hidden bg-f1-gray/10 rounded-md border border-f1-gray/20",
               isFiltersOpen ? "max-h-60 opacity-100 p-4 mb-6" : "max-h-0 opacity-0 p-0 border-transparent"
@@ -132,7 +153,6 @@ const Schedule = () => {
               </div>
             </div>
             
-            {/* Tabs */}
             <div className="border-b border-f1-gray/20 animate-fade-in">
               <nav className="-mb-px flex space-x-4">
                 <button
@@ -173,16 +193,13 @@ const Schedule = () => {
           </div>
         </div>
         
-        {/* Race Grid */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          {/* Loading Indicator */}
           {loading && (
             <div className="flex justify-center items-center py-20">
               <div className="h-12 w-12 rounded-full border-4 border-f1-red border-t-transparent animate-spin" />
             </div>
           )}
           
-          {/* No Results */}
           {!loading && filteredRaces.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20">
               <Calendar className="h-16 w-16 text-f1-gray mb-4" />
@@ -219,7 +236,15 @@ const Schedule = () => {
                     {...race}
                     time={adjustTime(race.time, selectedTimezone)}
                     season={selectedSeason}
-                    round={race.id.toString()}
+                    round={race.round}
+                    onViewLiveResults={
+                      selectedSeason === "2025" && race.isCurrentRace
+                        ? () => {
+                            setSelectedRace(race);
+                            setRaceWeekModalOpen(true);
+                          }
+                        : undefined
+                    }
                   />
                 </div>
               ))}
@@ -227,6 +252,17 @@ const Schedule = () => {
           )}
         </div>
       </main>
+      
+      {selectedSeason === "2025" && selectedRace && (
+        <RaceWeekModal
+          open={raceWeekModalOpen}
+          onOpenChange={(open) => setRaceWeekModalOpen(open)}
+          raceName={selectedRace.name}
+          circuit={selectedRace.circuit}
+          country={selectedRace.country}
+          sessions={getRaceWeekSessions(selectedRace)}
+        />
+      )}
       
       <Footer />
     </div>

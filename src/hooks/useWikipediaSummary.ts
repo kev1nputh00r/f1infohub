@@ -8,7 +8,7 @@ export const useWikipediaSummary = (title?: string) => {
       if (!title) return null;
       // Replace spaces with underscores for Wikipedia API
       const formattedTitle = title.replace(/\s+/g, "_");
-      const resp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/history/${encodeURIComponent(formattedTitle)}`);
+      const resp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(formattedTitle)}`);
       if (!resp.ok) throw new Error("Could not fetch Wikipedia summary");
       const data = await resp.json();
       return {

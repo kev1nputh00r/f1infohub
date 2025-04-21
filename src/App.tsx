@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +11,8 @@ import Standings from "./pages/Standings";
 import F1History from "./pages/F1History";
 import RaceDetails from "./pages/RaceDetails";
 import NotFound from "./pages/NotFound";
+import Circuits from "./pages/Circuits";
+import CircuitDetails from "./pages/CircuitDetails";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,8 @@ const App = () => (
           <Route path="/standings" element={<Standings />} />
           <Route path="/history" element={<F1History />} />
           <Route path="/races/:season/:round" element={<RaceDetails />} />
+          <Route path="/circuits" element={<Circuits />} />
+          <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

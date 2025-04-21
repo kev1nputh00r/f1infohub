@@ -31,6 +31,7 @@ const Navbar = () => {
     { name: 'Schedule', path: '/schedule', icon: <Calendar className="w-5 h-5" /> },
     { name: 'Standings', path: '/standings', icon: <Trophy className="w-5 h-5" /> },
     { name: 'News', path: '/news', icon: <Newspaper className="w-5 h-5" /> },
+    { name: 'Circuits', path: '/circuits', icon: <BookOpen className="w-5 h-5" /> },
     { name: 'F1 History', path: '/history', icon: <BookOpen className="w-5 h-5" /> },
   ];
 

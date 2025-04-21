@@ -21,7 +21,7 @@ const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018',
 
 const YOUTUBE_HIGHLIGHT_IDS: Record<string, Record<string, string>> = {
   "2024": {
-    "1": "ZGeG5AUmc4A",
+    "1": "https://www.youtube.com/watch?v=9Y5wMpKXNK4&list=PLfoNZDHitwjUv0pjTwlV1vzaE0r7UDVDR&index=25",
     "2": "OUgneSu1QHQ",
   },
   "2023": {

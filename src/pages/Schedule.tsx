@@ -7,6 +7,7 @@ import { useRaceSchedule } from '@/hooks/useRaceSchedule';
 import { cn } from '@/lib/utils';
 import { initScrollAnimations } from '@/lib/animation';
 import RaceWeekModal from "@/components/ui/RaceWeekModal";
+import YouTubeHighlightModal from "@/components/ui/YouTubeHighlightModal";
 
 const TIMEZONES = [
   { value: 'local', label: 'Local Time' },
@@ -18,6 +19,21 @@ const TIMEZONES = [
 
 const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
+const YOUTUBE_HIGHLIGHT_IDS: Record<string, Record<string, string>> = {
+  "2024": {
+    "1": "ZGeG5AUmc4A",
+    "2": "OUgneSu1QHQ",
+  },
+  "2023": {
+    "1": "hU-aU0pvHJI",
+    "2": "C5NqpJG15lo",
+  },
+  "2022": {
+    "1": "lNk5OC_0Wxg",
+    "2": "vEB1oA99z1A",
+  }
+};
+
 const Schedule = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('local');
   const [selectedSeason, setSelectedSeason] = useState('2024');
@@ -25,6 +41,9 @@ const Schedule = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [raceWeekModalOpen, setRaceWeekModalOpen] = useState(false);
   const [selectedRace, setSelectedRace] = useState<any | null>(null);
+  const [highlightModalOpen, setHighlightModalOpen] = useState(false);
+  const [highlightVideoId, setHighlightVideoId] = useState<string | null>(null);
+  const [highlightRaceName, setHighlightRaceName] = useState("");
 
   const { races, loading } = useRaceSchedule(selectedSeason);
 
@@ -230,24 +249,44 @@ const Schedule = () => {
           
           {!loading && filteredRaces.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRaces.map((race) => (
-                <div key={race.id} className="animate-on-scroll">
-                  <RaceCard
-                    {...race}
-                    time={adjustTime(race.time, selectedTimezone)}
-                    season={selectedSeason}
-                    round={race.round}
-                    onViewLiveResults={
-                      selectedSeason === "2025" && race.isCurrentRace
-                        ? () => {
-                            setSelectedRace(race);
-                            setRaceWeekModalOpen(true);
-                          }
-                        : undefined
-                    }
-                  />
-                </div>
-              ))}
+              {filteredRaces.map((race) => {
+                const isHighlightEligible = (
+                  ["2024", "2023", "2022"].includes(selectedSeason) &&
+                  race.isPastRace &&
+                  (YOUTUBE_HIGHLIGHT_IDS[selectedSeason]?.[race.round] ?? null)
+                );
+                return (
+                  <div key={race.id} className="animate-on-scroll relative">
+                    <RaceCard
+                      {...race}
+                      time={adjustTime(race.time, selectedTimezone)}
+                      season={selectedSeason}
+                      round={race.round}
+                      onViewLiveResults={
+                        selectedSeason === "2025" && race.isCurrentRace
+                          ? () => {
+                              setSelectedRace(race);
+                              setRaceWeekModalOpen(true);
+                            }
+                          : undefined
+                      }
+                    />
+                    {isHighlightEligible && (
+                      <button
+                        className="absolute top-4 left-4 z-30 bg-f1-red/90 hover:bg-f1-red text-white px-3 py-1 rounded-full text-xs font-semibold shadow transition-colors duration-200"
+                        onClick={() => {
+                          setHighlightVideoId(YOUTUBE_HIGHLIGHT_IDS[selectedSeason][race.round]);
+                          setHighlightRaceName(race.name);
+                          setHighlightModalOpen(true);
+                        }}
+                        title="Watch YouTube Highlights"
+                      >
+                        Watch Highlights
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -263,6 +302,13 @@ const Schedule = () => {
           sessions={getRaceWeekSessions(selectedRace)}
         />
       )}
+      
+      <YouTubeHighlightModal
+        open={highlightModalOpen}
+        onOpenChange={(open) => setHighlightModalOpen(open)}
+        videoId={highlightVideoId}
+        raceName={highlightRaceName}
+      />
       
       <Footer />
     </div>

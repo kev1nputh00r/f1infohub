@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Titillium+Web:wght@200;300;400;600;700;900&display=swap');
 
 @tailwind base;
@@ -99,13 +98,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    transition-property: background-color, border-color, text-decoration-color, fill, stroke;
+    transition-property: background-color, border-color, text-decoration-color, fill, stroke, color;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-formula font-bold tracking-tight;
+    @apply font-formula font-bold tracking-tight text-foreground;
   }
 }
 

@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Titillium+Web:wght@200;300;400;600;700;900&display=swap');
 
 @tailwind base;
@@ -63,7 +62,7 @@
   }
 
   body {
-    @apply bg-f1-black text-foreground font-sans;
+    @apply bg-dark-background dark:bg-dark-background text-dark-foreground dark:text-dark-foreground antialiased transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 

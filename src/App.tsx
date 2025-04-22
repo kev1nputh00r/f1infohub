@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import Index from "./pages/Index";
 import LiveResults from "./pages/LiveResults";
 import News from "./pages/News";
@@ -18,24 +20,27 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/live" element={<LiveResults />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/standings" element={<Standings />} />
-          <Route path="/history" element={<F1History />} />
-          <Route path="/races/:season/:round" element={<RaceDetails />} />
-          <Route path="/circuits" element={<Circuits />} />
-          <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ThemeToggle />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/live" element={<LiveResults />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/standings" element={<Standings />} />
+            <Route path="/history" element={<F1History />} />
+            <Route path="/races/:season/:round" element={<RaceDetails />} />
+            <Route path="/circuits" element={<Circuits />} />
+            <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

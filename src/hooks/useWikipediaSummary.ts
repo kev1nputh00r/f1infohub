@@ -8,26 +8,12 @@ export const useWikipediaSummary = (title?: string) => {
       if (!title) return null;
       // Replace spaces with underscores for Wikipedia API
       const formattedTitle = title.replace(/\s+/g, "_");
-      
-      // First get the summary
-      const summaryResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(formattedTitle)}`);
-      if (!summaryResp.ok) throw new Error("Could not fetch Wikipedia summary");
-      const summaryData = await summaryResp.json();
-      
-      // Then get the full page content to extract history section
-      const sectionsResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/segments/${encodeURIComponent(formattedTitle)}`);
-      if (!sectionsResp.ok) throw new Error("Could not fetch Wikipedia sections");
-      const sectionsData = await sectionsResp.json();
-      
-      // Find the history section
-      const historySection = sectionsData.segments?.find((segment: any) => 
-        segment.heading?.toLowerCase().includes('history')
-      );
-
+      const resp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(formattedTitle)}`);
+      if (!resp.ok) throw new Error("Could not fetch Wikipedia summary");
+      const data = await resp.json();
       return {
-        summary: summaryData.extract,
-        history: historySection?.text || null,
-        url: summaryData.content_urls?.desktop?.page,
+        summary: data.extract,
+        url: data.content_urls?.desktop?.page,
       };
     },
     enabled: !!title,

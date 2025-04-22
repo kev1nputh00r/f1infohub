@@ -15,7 +15,6 @@ import RaceDetails from "./pages/RaceDetails";
 import NotFound from "./pages/NotFound";
 import Circuits from "./pages/Circuits";
 import CircuitDetails from "./pages/CircuitDetails";
-import FantasyLeague from "./pages/FantasyLeague";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +36,6 @@ const App = () => (
             <Route path="/races/:season/:round" element={<RaceDetails />} />
             <Route path="/circuits" element={<Circuits />} />
             <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
-            <Route path="/fantasy" element={<FantasyLeague />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

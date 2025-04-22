@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Titillium+Web:wght@200;300;400;600;700;900&display=swap');
 
 @tailwind base;
@@ -24,46 +25,83 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
     --primary: 0 85.6% 97.3%;
     --primary-foreground: 0 0% 9%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
+    
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
+    
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
     --ring: 142.4 71.8% 29.2%;
-
+    
     --radius: 0.5rem;
 
     --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 0 85.6% 97.3%;
+    --primary-foreground: 0 0% 9%;
+    
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
   }
 
   * {
     @apply border-border;
   }
 
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-dark-background dark:bg-dark-background text-dark-foreground dark:text-dark-foreground antialiased transition-colors duration-300;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition-property: background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -73,7 +111,7 @@
 
 @layer utilities {
   .glass-effect {
-    @apply backdrop-blur-md bg-white/10 border border-white/20;
+    @apply backdrop-blur-md bg-background/10 border border-border/20;
   }
   
   .text-shadow {
@@ -82,6 +120,10 @@
   
   .transition-all-custom {
     @apply transition-all duration-300 ease-in-out;
+  }
+
+  .will-change-transform {
+    will-change: transform;
   }
 }
 
@@ -92,18 +134,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-f1-black/50;
+  @apply bg-muted/50;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-f1-gray/50 rounded-full hover:bg-f1-gray/80 transition-all duration-200;
+  @apply bg-muted/80 rounded-full hover:bg-muted transition-all duration-200;
 }
 
-/* Animation classes */
+/* Animation classes with optimizations */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: opacity, transform;
 }
 
 .animate-on-scroll.animated {
@@ -111,10 +154,11 @@
   transform: translateY(0);
 }
 
-/* Page transition animations */
+/* Page transition animations with performance optimizations */
 .page-enter {
   opacity: 0;
   transform: translateY(20px);
+  will-change: opacity, transform;
 }
 
 .page-enter-active {
@@ -126,6 +170,7 @@
 .page-exit {
   opacity: 1;
   transform: translateY(0);
+  will-change: opacity, transform;
 }
 
 .page-exit-active {

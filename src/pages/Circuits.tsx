@@ -1,8 +1,9 @@
 
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useCircuits } from "@/hooks/useCircuits";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 const Circuits = () => {
   const { data: circuits = [], isLoading, error } = useCircuits("2025");
@@ -42,6 +43,17 @@ const Circuits = () => {
             </Card>
           </Link>
         ))}
+      </div>
+      
+      {/* New back to home button */}
+      <div className="mt-8 flex justify-center">
+        <Button 
+          variant="secondary" 
+          onClick={() => window.location.href = '/'}
+          className="w-full max-w-md"
+        >
+          <ArrowLeft className="mr-2" /> Back to Home
+        </Button>
       </div>
     </div>
   );

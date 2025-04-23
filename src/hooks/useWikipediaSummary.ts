@@ -6,17 +6,36 @@ export const useWikipediaSummary = (title?: string) => {
     queryKey: ["wikipedia-summary", title],
     queryFn: async () => {
       if (!title) return null;
-      // Replace spaces with underscores for Wikipedia API
+
       const formattedTitle = title.replace(/\s+/g, "_");
-      const resp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(formattedTitle)}`);
-      if (!resp.ok) throw new Error("Could not fetch Wikipedia summary");
-      const data = await resp.json();
+
+      // Fetch summary
+      const summaryResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(formattedTitle)}`);
+      if (!summaryResp.ok) throw new Error("Could not fetch Wikipedia summary");
+      const summaryData = await summaryResp.json();
+
+      // Fetch full content via Wikipedia API (for History section)
+      const contentResp = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=true&format=json&origin=*&titles=${encodeURIComponent(formattedTitle)}`
+      );
+      if (!contentResp.ok) throw new Error("Could not fetch Wikipedia content");
+      const contentData = await contentResp.json();
+
+      // Extract plain text content
+      const page = Object.values(contentData.query.pages)[0] as any;
+      const content = page.extract || "";
+
+      // Extract the History section
+      const historyMatch = content.match(/==\s*History\s*==([\s\S]*?)(?:==|$)/i);
+      const history = historyMatch ? historyMatch[1].trim() : null;
+
       return {
-        summary: data.extract,
-        url: data.content_urls?.desktop?.page,
+        summary: summaryData.extract,
+        url: summaryData.content_urls?.desktop?.page,
+        history,
       };
     },
     enabled: !!title,
-    staleTime: 1000 * 60 * 60, // 1 hour (to avoid spamming Wikipedia)
+    staleTime: 1000 * 60 * 60,
   });
 };

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,33 +16,43 @@ import RaceDetails from "./pages/RaceDetails";
 import NotFound from "./pages/NotFound";
 import Circuits from "./pages/Circuits";
 import CircuitDetails from "./pages/CircuitDetails";
+import { supabase } from "./lib/supabase";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ThemeToggle />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/live" element={<LiveResults />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/standings" element={<Standings />} />
-            <Route path="/history" element={<F1History />} />
-            <Route path="/races/:season/:round" element={<RaceDetails />} />
-            <Route path="/circuits" element={<Circuits />} />
-            <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const isSupabaseConfigured = supabase !== null;
+
+  // If Supabase isn't configured properly and we're not in development, show warning
+  if (!isSupabaseConfigured && import.meta.env.MODE === 'production') {
+    console.warn("Supabase is not configured. Please check your environment variables.");
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ThemeToggle />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/live" element={<LiveResults />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/standings" element={<Standings />} />
+              <Route path="/history" element={<F1History />} />
+              <Route path="/races/:season/:round" element={<RaceDetails />} />
+              <Route path="/circuits" element={<Circuits />} />
+              <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

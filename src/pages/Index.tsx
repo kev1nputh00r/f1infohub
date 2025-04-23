@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import RaceCard from '@/components/ui/RaceCard';
 import NewsCard from '@/components/ui/NewsCard';
 import DriverCard from '@/components/ui/DriverCard';
+import FantasyStatsSection from '@/components/fantasy/FantasyStatsSection';
 import { useDriverStandings } from '@/hooks/useDriverStandings';
 import { useConstructorStandings } from '@/hooks/useConstructorStandings';
 import { useRaceSchedule } from '@/hooks/useRaceSchedule';
@@ -238,6 +239,8 @@ const Index = () => {
             )}
           </div>
         </section>
+        
+        <FantasyStatsSection />
         
         <section className="py-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">

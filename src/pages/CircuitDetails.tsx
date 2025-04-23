@@ -70,6 +70,12 @@ const CircuitDetails = () => {
             {!wikiLoading && wikipedia?.summary && (
               <div className="mb-2 text-base text-muted-foreground">{wikipedia.summary}</div>
             )}
+            {!wikiLoading && wikipedia?.history && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold mb-1">History</h3>
+                <p className="text-muted-foreground whitespace-pre-line">{wikipedia.history}</p>
+              </div>
+            )}
             {!wikiLoading && wikipedia?.url && (
               <a
                 href={wikipedia.url}

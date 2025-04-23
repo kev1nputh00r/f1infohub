@@ -36,18 +36,19 @@ export const useRaceResults = (season: string) => {
                 
                 if (!raceData) return null;
                 
+                // Use capital R: Results (fixes bug)
                 return {
                   round: race.round,
                   raceName: raceData.raceName,
                   date: raceData.date,
-                  results: raceData.results.map(result => ({
+                  results: raceData.Results.map(result => ({
                     position: result.position,
-                    driver: `${result.driver}`,
-                    driverId: result.driverId,
-                    team: result.team,
-                    teamId: result.teamId,
-                    teamColor: result.teamColor,
-                    driverImg: result.driverImg,
+                    driver: `${result.Driver.givenName} ${result.Driver.familyName}`,
+                    driverId: result.Driver.driverId,
+                    team: result.Constructor.name,
+                    teamId: result.Constructor.constructorId,
+                    teamColor: getTeamColor(result.Constructor.name),
+                    driverImg: getDriverImageUrl(result.Driver.driverId),
                   })),
                 };
               } catch (err) {

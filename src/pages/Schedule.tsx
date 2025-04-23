@@ -19,6 +19,14 @@ const TIMEZONES = [
 const SEASONS = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'];
 
 const YOUTUBE_HIGHLIGHT_IDS: Record<string, Record<string, string>> = {
+  "2025": {
+    "1": "https://www.youtube.com/watch?v=md9-jG4RzXs&list=PLfoNZDHitwjUleAqrgG-OC5gVAL2mv-Mh&index=4",
+    "2": "https://www.youtube.com/watch?v=Hml6MaRRkn8&list=PLfoNZDHitwjUleAqrgG-OC5gVAL2mv-Mh&index=3",
+    "3": "https://www.youtube.com/watch?v=or9ooNWaqKU&list=PLfoNZDHitwjUleAqrgG-OC5gVAL2mv-Mh&index=2",    
+    "4": "https://www.youtube.com/watch?v=bFXLP487kXo&list=PLfoNZDHitwjUleAqrgG-OC5gVAL2mv-Mh&index=1",
+    "5": "https://www.youtube.com/watch?v=Li93iQDZQeg",
+    
+  },
   "2024": {
     "1": "https://www.youtube.com/watch?v=9Y5wMpKXNK4&list=PLfoNZDHitwjUv0pjTwlV1vzaE0r7UDVDR&index=25",
     "2": "https://www.youtube.com/watch?v=OJ56MAGFPGM&list=PLfoNZDHitwjUv0pjTwlV1vzaE0r7UDVDR&index=24",

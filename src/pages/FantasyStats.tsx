@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
-import { getSupabase } from '@/lib/supabase';
+import { ArrowLeft } from 'lucide-react';
 import DriverPerformanceTable from '@/components/fantasy/DriverPerformanceTable';
 import LoginForm from '@/components/fantasy/LoginForm';
 
@@ -50,6 +49,17 @@ const FantasyStats = () => {
         </Button>
       </div>
       <DriverPerformanceTable />
+      
+      {/* New back to home button */}
+      <div className="mt-8 flex justify-center">
+        <Button 
+          variant="secondary" 
+          onClick={() => navigate('/')}
+          className="w-full max-w-md"
+        >
+          <ArrowLeft className="mr-2" /> Back to Home
+        </Button>
+      </div>
     </div>
   );
 };

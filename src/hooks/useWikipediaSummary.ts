@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 
 export const useWikipediaSummary = (title?: string) => {
@@ -14,19 +13,21 @@ export const useWikipediaSummary = (title?: string) => {
       if (!summaryResp.ok) throw new Error("Could not fetch Wikipedia summary");
       const summaryData = await summaryResp.json();
 
-      // Fetch full content via Wikipedia API (for History section)
+      // Fetch full page content for sections
       const contentResp = await fetch(
         `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=true&format=json&origin=*&titles=${encodeURIComponent(formattedTitle)}`
       );
       if (!contentResp.ok) throw new Error("Could not fetch Wikipedia content");
       const contentData = await contentResp.json();
 
-      // Extract plain text content
-      const page = Object.values(contentData.query.pages)[0] as any;
-      const content = page.extract || "";
+      // Grab page content
+      const pages = contentData.query?.pages;
+      const firstPage = pages ? Object.values(pages)[0] : null;
+      const fullContent = (firstPage as any)?.extract || "";
 
-      // Extract the History section
-      const historyMatch = content.match(/==\s*History\s*==([\s\S]*?)(?:==|$)/i);
+      // Extract the "History" section
+      const historyRegex = /==\s*History\s*==([\s\S]*?)(?=^==\s*\w|\Z)/im;
+      const historyMatch = fullContent.match(historyRegex);
       const history = historyMatch ? historyMatch[1].trim() : null;
 
       return {

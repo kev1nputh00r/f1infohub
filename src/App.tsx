@@ -17,6 +17,7 @@ import RaceDetails from "./pages/RaceDetails";
 import NotFound from "./pages/NotFound";
 import Circuits from "./pages/Circuits";
 import CircuitDetails from "./pages/CircuitDetails";
+import FantasyStats from "./pages/FantasyStats"; // Import the new page
 import { supabase } from "./lib/supabase";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => {
                 <Route path="/races/:season/:round" element={<RaceDetails />} />
                 <Route path="/circuits" element={<Circuits />} />
                 <Route path="/circuits/:circuitId" element={<CircuitDetails />} />
+                <Route path="/fantasy" element={<FantasyStats />} /> {/* Add the new route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

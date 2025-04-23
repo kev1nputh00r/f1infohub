@@ -1,6 +1,24 @@
 
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { FantasyTeam } from '@/components/ui/FantasyStatsCard';
+
+export interface FantasyTeam {
+  id: string;
+  name: string;
+  manager: string;
+  points: number;
+  rank: number;
+  previousRank?: number;
+  projection: number;
+  teamValue: string;
+}
+
+interface DriverFantasyPoints {
+  driverId: string;
+  name: string;
+  team: string;
+  points: number;
+  value: string;
+}
 
 interface FantasyLeagueData {
   myTeams: FantasyTeam[];
@@ -10,6 +28,7 @@ interface FantasyLeagueData {
     leagueCode: string;
   };
   loading: boolean;
+  driverPoints?: DriverFantasyPoints[];
 }
 
 const initialFantasyData: FantasyLeagueData = {
@@ -40,7 +59,15 @@ const initialFantasyData: FantasyLeagueData = {
     totalTeams: 24,
     leagueCode: 'F1GC2024'
   },
-  loading: false
+  loading: false,
+  // Sample driver points based on the 10-9-8... points system
+  driverPoints: [
+    { driverId: 'max_verstappen', name: 'Max Verstappen', team: 'Red Bull', points: 87, value: '$32.5M' },
+    { driverId: 'charles_leclerc', name: 'Charles Leclerc', team: 'Ferrari', points: 73, value: '$28.2M' },
+    { driverId: 'lando_norris', name: 'Lando Norris', team: 'McLaren', points: 69, value: '$26.8M' },
+    { driverId: 'carlos_sainz', name: 'Carlos Sainz', team: 'Ferrari', points: 54, value: '$24.5M' },
+    { driverId: 'lewis_hamilton', name: 'Lewis Hamilton', team: 'Mercedes', points: 48, value: '$27.0M' }
+  ]
 };
 
 const FantasyLeagueContext = createContext<FantasyLeagueData>(initialFantasyData);

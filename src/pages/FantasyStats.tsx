@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
+import { notify } from '@/components/ui/use-toast';
 import { ArrowLeft } from 'lucide-react';
 import DriverPerformanceTable from '@/components/fantasy/DriverPerformanceTable';
 import LoginForm from '@/components/fantasy/LoginForm';
+import { NotificationDemo } from '@/components/ui/NotificationDemo';
 
 const FantasyStats = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,9 +15,9 @@ const FantasyStats = () => {
   
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
-    toast({
+    notify.success({
       title: "Login Successful",
-      description: "You now have access to driver statistics and performance metrics.",
+      description: "You now have access to driver statistics and performance metrics."
     });
   };
 
@@ -48,6 +49,15 @@ const FantasyStats = () => {
           Back to Fantasy League
         </Button>
       </div>
+      
+      <Card className="mb-8 p-6 bg-f1-gray/20 border border-f1-gray/30">
+        <h2 className="text-xl font-formula mb-4 text-white">Notification System Demo</h2>
+        <p className="text-gray-300 mb-4">
+          Click the buttons below to see different types of notifications in action.
+        </p>
+        <NotificationDemo />
+      </Card>
+      
       <DriverPerformanceTable />
       
       {/* New back to home button */}

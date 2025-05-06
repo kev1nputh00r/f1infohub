@@ -1,4 +1,4 @@
-F1InfoHub is a Formula 1 info portal I built to combine my love for F1 with my passion for web development. Inspired by the official F1 site, it offers a streamlined, responsive interface to explore drivers, teams, circuits, and race results from the 2023 and 2024 seasons.
+F1InfoHub is a Formula 1 information portal I created using Lovable, a modern visual development tool that integrates seamlessly with code. Inspired by the official Formula 1 website, this project focuses on delivering a fast, clean, and responsive UI to explore drivers, teams, circuits, and race results from both the 2023 and 2024 seasons.
 Follow these steps to run the code:
 
 ```sh
